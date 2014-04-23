@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var db = mongoose.connect('mongodb://dami:opener@oceanic.mongohq.com:10080/app24448078');
+var db = mongoose.connect('mongodb://localhost/test');
 
 var Test = mongoose.Schema({
     testId: String,
