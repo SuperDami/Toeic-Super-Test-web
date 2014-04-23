@@ -5,7 +5,7 @@ npm install/n
 node index.js
 
 View the main page at:/n
-http://localhost:3700
+http://localhost:3000
 
 Post/Edit/Delete test package info at:/n
-http://localhost:3700/testList
+http://localhost:3000/testList
