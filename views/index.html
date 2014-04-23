@@ -25,7 +25,7 @@
 
     	function downloadTest(test) {
             console.log(test);
-			var url = 'com.alc.topic.supertest://' + escape(test.testId) + '/' + escape(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
+			var url = 'com.alc.topic.supertest://' + encodeURIComponent(test.testId) + '/' + encodeURIComponent(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
 			window.location = url; 
     	}
 
