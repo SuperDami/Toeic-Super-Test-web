@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <title>AddTest</title>
+	    <style type="text/css">
+		    input { width: 300px; height:20px; line-height: 20px; border-radius: 5px; margin-right: 100px};
+		    label { margin-left: auto;}
+		    div.inputText {width:700px; margin-top: 20px;}
+	    </style>
+	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	    <script src='/js/editTest.js'></script>
+	    <script type="text/javascript">
+	        function postNewTest() {
+				$.post("/postNewTest", $("#postTestForm").serialize(), function(data){
+					if (data.url) {
+						window.location = data.url;
+					}
+					else {
+
+					}
+				}, "json");
+	        }
+
+	        function updateTest() {
+				$.post("/updateTest", $("#postTestForm").serialize(), function(data){
+					if (data.url) {
+						window.location = data.url;
+					}
+					else {
+
+					}
+				}, "json");	        	
+	        }
+	    </script>
+    </head>
+    <body>
+    	<div>
+	    	<form method="post" id="postTestForm" action="/postNewTest">
+	    		<div class='inputText'>
+	    			<label>testId</label>
+	    			<%if(test) {%>
+	    				   <input type="text" name="testId" id="testId" value=<%=test["testId"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="testId" id="testId">
+	    			<% } %>
+	    		</div>
+	    		<% if(test) { %>
+	    			<input type="text" name="lastTestId" id="lastTestId" value=<%=test["testId"]%> hidden="true">
+	    		<% } %>
+	    		<div class='inputText'>
+	    			<label>title</label>
+	    			<%if(test) {%>
+						   <input type="text" name="title" id="title" value=<%=test["title"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="title" id="title">
+	    			<% } %>
+	    		</div>
+	    		<div class='inputText'>
+	    			<label>cover image url</label>
+	    			<%if(test) {%>
+	    				   <input type="text" name="coverImageUrl" id="coverImageUrl" value=<%=test["coverImageUrl"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="coverImageUrl" id="coverImageUrl">
+	    			<% } %>
+	    		</div>
+	    		<div class='inputText'>
+	    			<label>zip package url</label>
+	    			<%if(test) {%>
+	    				   <input type="text" name="zipUrl" id="zipUrl" value=<%=test["zipUrl"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="zipUrl" id="zipUrl">
+	    			<% } %>
+	    		</div>
+	    		<div class='inputText'>
+					<label>price</label>	
+	    			<%if(test) {%>
+	    				   <input type="text" name="price" id="price" value=<%=test["price"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="price" id="price">
+	    			<% } %>
+	    		</div>
+	    	</form>    		
+	    	<button type="submit" <% if(test){ %>onclick="updateTest()"<% } else { %>onclick="postNewTest()"<% } %>>Post</button>
+    	</div>
+    </body>
+</html>

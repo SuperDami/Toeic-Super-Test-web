@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Toeic</title>
+    <link rel='stylesheet' type='text/css' href='/style/stylesheet.css'/>
+    <style type="text/css">
+    	input {float:both; margin-left: 20px; font-size: 16px; border: none; background: none;}
+    	input#restore {float:right; margin-right: 20px};
+    	hr {color: gray;}
+    	.downloadBtn {border-width: 1px; border-radius: 2px; border-color:black; margin-top: 0px; margin-bottom: 0px; clear: both; color:white; background-color: #72AB12; font-size:12px;}
+    	.cellCover {width:140px; height: 180px;}
+    </style>
+    <script type="text/javascript">
+    	function collectionSelect(sender) {
+    		var buttons = document.getElementsByName("button");
+    		for (var i = buttons.length - 1; i >= 0; i--) {
+    			if (buttons[i] !== sender) {
+    				buttons[i].style.color = "gray";
+    			}
+    			else {
+    				buttons[i].style.color = "black";
+    			}
+    		};
+    	}
+
+    	function downloadTest(test) {
+            console.log(test);
+			var url = 'com.alc.topic.supertest://' + escape(test.testId) + '/' + escape(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
+			window.location = url; 
+    	}
+
+	</script>
+	</head>
+	<body>
+		<div id='container'>
+			<div id='header'>
+				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4'/>
+			</div>
+			<form>
+				<input type='button' name='button' id='popularBtn' value='人気 コンテンシ' onclick="collectionSelect(this)">
+				<input type='button' name='button' id='myTest' value='マイ ライブラリ' onclick="collectionSelect(this)">
+				<input type='button' name='button' id='restore' value='リストア' onclick='collectionSelect(this)'>
+			</form>
+
+			<hr/>
+
+			<div id='grid'>
+                <% for (var i = 0; i < testList.length; i++) { 
+                    var test = testList[i];
+                    %>
+                    <div style='width:140px; height:230px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; text-align: center; float:left;'>
+                        <img src='<%=test.coverImageUrl%>' class='cellCover'>
+                        <p style="clear:both; margin-top: 0px; margin-bottom: 0px; font-size:12px;"><%=test.title%></p>
+                        <% if(!test.downloaded) {%>
+                            <button class='downloadBtn' onclick='downloadTest(<%-JSON.stringify(test)%>)'>ダウンロード</button>
+                        <% } else { %>
+                            <p style="color:gray; clear:both; margin-top: 0px; margin-bottom: 0px; font-size:12px;">ダウンロード済み</p>
+                        <% } %>
+                    </div>
+                <% } %>
+			</div>
+		</div>
+	</body>
+</html>

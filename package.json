@@ -1,0 +1,11 @@
+{
+    "name": "toeic-supertest-web",
+    "main": "./index.js",
+    "version": "0.0.1",
+	"dependencies": {
+	    "express": "3.x",
+	    "ejs": "",
+	    "mongoose": ""
+	}, 
+	"engines": { "node": "0.4.x" }
+}

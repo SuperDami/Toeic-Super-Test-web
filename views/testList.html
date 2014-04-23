@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Toeic-Super-Test Manager List</title>
+	</head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		function post_to_url(path, params, method) {
+			console.log("params" + params);
+		    method = method || "post"; // Set method to post by default if not specified.
+
+		    // The rest of this code assumes you are not using a library.
+		    // It can be made less wordy if you use one.
+		    var form = document.createElement("form");
+		    form.setAttribute("method", method);
+		    form.setAttribute("action", path);
+
+		    for(var key in params) {
+		        if(params.hasOwnProperty(key)) {
+		            var hiddenField = document.createElement("input");
+		            hiddenField.setAttribute("type", "hidden");
+		            hiddenField.setAttribute("name", key);
+		            hiddenField.setAttribute("value", params[key]);
+
+		            form.appendChild(hiddenField);
+		         }
+		    }
+
+		    document.body.appendChild(form);
+		    form.submit();
+		}
+	</script>
+	<body>
+		<div id='container'>
+			<button style="background:#72AB12; border-width:1px; font-size:12px; border-color:black;" onclick="location.href='/addTest'">New test</button>
+			<hr/>
+			<table width="600">
+			  <tr>
+			  <% for(var i = 0; i < columnName.length; i++) { %>
+				  <th align="left"><%=columnName[i]%></th>
+			  <% } %>
+			  </tr>
+
+			  <% for(var i = 0; i < testList.length; i++) { 
+			  		var test = testList[i];
+			  	%>
+				<tr>
+				  <% for(var j = 0; j < columnName.length; j++) {
+				  		var name = columnName[j];
+				  		var value = test[name];
+				  		%>
+
+				  		<th align="left">
+				  		<% if(name === "testId"){ %>
+				  			  <a href="/addTest?testId=<%=value%>"><%=value%></a>
+				  		<% }
+				  		   else {
+				  		   	  %><%=value%><%
+				  		   } %>
+				        </th>
+				  <% } %>
+				  	<th>
+				  	  <button style="background:#FF3807; border-width:1px; font-size:12px; border-color:black;" onclick="post_to_url('/deletePost', {testId: '<%=test['testId']%>'}, 'post')">delete</button>	
+				  	</th>
+				</tr>
+			  <% } %>
+			</table>
+		</div>		
+	</body>
+</html>
