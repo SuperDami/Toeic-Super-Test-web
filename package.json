@@ -1,6 +1,6 @@
 {
     "name": "toeic-supertest-web",
-    "main": "./index.js",
+    "main": "index.js",
     "version": "0.0.1",
 	"dependencies": {
 	    "express": "3.x",
