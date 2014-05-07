@@ -29,6 +29,10 @@
 		    document.body.appendChild(form);
 		    form.submit();
 		}
+
+		function goToPage(pageIndex) {
+			window.location = "testList?page=" + pageIndex; 
+		}
 	</script>
 	<body>
 		<div id='container'>
@@ -66,5 +70,16 @@
 			  <% } %>
 			</table>
 		</div>		
+		<div>
+            <% if(prePage) { %>
+                    <% var page = pageIndex - 1 %>
+                    <button style="border-width:1px; font-size:12px; border-color:black; float:left; margin-left:40%" onclick="goToPage(<%=page%>)"><<<</button>
+            <% } %>
+
+            <% if(nextPage) { %>
+                    <% var page = pageIndex + 1 %>
+                    <button style="border-width:1px; font-size:12px; border-color:black; float:right; margin-right:40%" onclick="goToPage(<%=page%>)">>>></button>
+            <% } %>
+		</div>
 	</body>
 </html>

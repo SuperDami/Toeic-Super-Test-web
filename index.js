@@ -9,35 +9,56 @@ app.use(express.bodyParser());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
-app.get('/', function(req, res) {
-	data.Test.find({}, function(err, tests){
-		if (err) {
-			res.send(err);
-		}
+app.get('/index', function(req, res) {
+	var perPage = 12
+  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+	var model = data.Test;
 
-		var query = url.parse(req.url, true).query;
-		if (query['fetchedTestId']) {
-			var testIdArray = query['fetchedTestId'].split(',');
-			for (var i = 0; i < testIdArray.length; i++) {
-				testId = testIdArray[i];
-				for (var j = 0; j < tests.length; j++) {
-					var test = tests[j];
-					if(testId === test["testId"]) {
-						test['downloaded'] = true;
-					}
-				};
-			};
-		}
-		res.render('index.html', {testList: tests});
+	model.find(null, null, {skip:perPage*page, limit:perPage}, function(filterErr, tests){
+		model.count().exec(function(countErr, count){
+			if (filterErr || countErr) {
+				res.send(filterErr || countErr);
+			}
+			else {
+				var query = url.parse(req.url, true).query;
+				if (query['fetchedTestId']) {
+					var testIdArray = query['fetchedTestId'].split(',');
+					for (var i = 0; i < testIdArray.length; i++) {
+						testId = testIdArray[i];
+						for (var j = 0; j < tests.length; j++) {
+							var test = tests[j];
+							if(testId === test["testId"]) {
+								test['downloaded'] = true;
+							}
+						};
+					};
+				}
+				res.render('index.html', {testList: tests,
+					pageIndex: page,
+			 		prePage: (page > 0 && perPage*page < count),
+			 		nextPage: (perPage*page + perPage < count)});
+			}
+		});
 	});
 });
 
 app.get('/testList', function(req, res) {
-	data.Test.find({}, function(err, tests){
-		if (err) {
+	var perPage = 20
+	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+	var model = data.Test;
 
-		}
-		res.render('testList.html', {testList: tests, columnName:["title", "testId", "price", "created_at"]});
+	model.find(null, null, {skip:perPage*page, limit:perPage}, function(filterErr, tests){
+		model.count().exec(function(countErr, count){
+			if (filterErr || countErr) {
+				res.end(JSON.stringify({err:filterErr || countErr, url:"/testList"}));
+			}
+			
+			res.render('testList.html', {testList: tests,
+			 columnName:["title", "testId", "price", "created_at"],
+			 pageIndex: page,
+			 prePage: (page > 0 && perPage*page < count),
+			 nextPage: (perPage*page + perPage < count)});
+		});
 	});
 });
 
