@@ -9,7 +9,7 @@ app.use(express.bodyParser());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
-app.get('/index', function(req, res) {
+app.get('/', function(req, res) {
 	var perPage = 12
   	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
 	var model = data.Test;
@@ -33,8 +33,10 @@ app.get('/index', function(req, res) {
 						};
 					};
 				}
+				var pageCount = Math.ceil(count/perPage);
 				res.render('index.html', {testList: tests,
 					pageIndex: page,
+					pageCount: pageCount,
 			 		prePage: (page > 0 && perPage*page < count),
 			 		nextPage: (perPage*page + perPage < count)});
 			}
@@ -53,9 +55,12 @@ app.get('/testList', function(req, res) {
 				res.end(JSON.stringify({err:filterErr || countErr, url:"/testList"}));
 			}
 			
+			var pageCount = Math.ceil(count/perPage);
+
 			res.render('testList.html', {testList: tests,
 			 columnName:["title", "testId", "price", "created_at"],
 			 pageIndex: page,
+			 pageCount: pageCount,
 			 prePage: (page > 0 && perPage*page < count),
 			 nextPage: (perPage*page + perPage < count)});
 		});

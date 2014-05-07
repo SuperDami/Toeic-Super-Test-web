@@ -30,13 +30,13 @@
     	}
 
         function goToPage(pageIndex) {
-            window.location = "index?page=" + pageIndex; 
+            window.location = "?page=" + pageIndex; 
         }
 
 	</script>
 	</head>
 	<body>
-		<div id='container'>
+		<div id='container' style="width:100%;">
 			<div id='header'>
 				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4'/>
 			</div>
@@ -63,16 +63,24 @@
                     </div>
                 <% } %>
 			</div>
-            <div style="width:100%; float:left">
+            <div style="width:100%; float:left; text-align:center">
                 <% if(prePage) { %>
-                        <% var page = pageIndex - 1 %>
-                        <button style="border-width:1px; font-size:12px; border-color:black; float:left; margin-left:40%" onclick="goToPage(<%=page%>)"><<<</button>
+                    <% var page = pageIndex - 1 %>
+                    <button class="page" onclick="goToPage(<%=page%>)">
+                <% } else { %>
+                    <button class="page" disabled>
                 <% } %>
+                <<<</button>
+
+                <a><%=pageIndex + 1%>/<%=pageCount%></a>
 
                 <% if(nextPage) { %>
-                        <% var page = pageIndex + 1 %>
-                        <button style="border-width:1px; font-size:12px; border-color:black; float:right; margin-right:40%" onclick="goToPage(<%=page%>)">>>></button>
+                    <% var page = pageIndex + 1 %>
+                    <button class="page" onclick="goToPage(<%=page%>)">
+                <% } else { %>
+                    <button class="page" disabled>
                 <% } %>
+                >>></button>
             </div>
 		</div>
 	</body>

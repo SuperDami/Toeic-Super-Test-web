@@ -34,27 +34,50 @@
 			window.location = "testList?page=" + pageIndex; 
 		}
 	</script>
+	<style type="text/css">
+		a {
+			font-family: Helvetica;
+		}
+		table {
+			border: none;
+			font-family: Helvetica;
+		}
+    	th.capitalize {
+    		text-transform:capitalize;
+    	}
+    	button.page {
+    		border-width:1px;
+    		font-size:12px; 
+    		border-color:black; 
+    	}
+	</style>
 	<body>
-		<div id='container'>
+		<div id='container' style="width:100%;">
 			<button style="background:#72AB12; border-width:1px; font-size:12px; border-color:black;" onclick="location.href='/addTest'">New test</button>
 			<hr/>
-			<table width="600">
+			<table width="100%" cellspacing="0" cellpadding="5">
 			  <tr>
 			  <% for(var i = 0; i < columnName.length; i++) { %>
-				  <th align="left"><%=columnName[i]%></th>
+				  <th class="capitalize" align="center" style="width:<%= 80.0/columnName.length%>%">
+				  	<%=columnName[i]%>
+				  </th>
 			  <% } %>
 			  </tr>
 
 			  <% for(var i = 0; i < testList.length; i++) { 
 			  		var test = testList[i];
 			  	%>
-				<tr>
+			  	<% if(i%2) {%>
+			  		<tr style="background-color: white">
+			  	<% } else {%>
+			  		<tr style="background-color: #D7D7D7">
+			  	<% } %>
 				  <% for(var j = 0; j < columnName.length; j++) {
 				  		var name = columnName[j];
 				  		var value = test[name];
 				  		%>
 
-				  		<th align="left">
+				  		<th align="center" class="cell">
 				  		<% if(name === "testId"){ %>
 				  			  <a href="/addTest?testId=<%=value%>"><%=value%></a>
 				  		<% }
@@ -69,17 +92,25 @@
 				</tr>
 			  <% } %>
 			</table>
-		</div>		
-		<div>
-            <% if(prePage) { %>
-                    <% var page = pageIndex - 1 %>
-                    <button style="border-width:1px; font-size:12px; border-color:black; float:left; margin-left:40%" onclick="goToPage(<%=page%>)"><<<</button>
-            <% } %>
+			<div style="width:100%; text-align:center; margin-top:20px">
+	            <% if(prePage) { %>
+		            <% var page = pageIndex - 1 %>
+		            <button class="page" onclick="goToPage(<%=page%>)">
+	            <% } else { %>
+		            <button class="page" disabled>
+	            <% } %>
+	            <<<</button>
 
-            <% if(nextPage) { %>
-                    <% var page = pageIndex + 1 %>
-                    <button style="border-width:1px; font-size:12px; border-color:black; float:right; margin-right:40%" onclick="goToPage(<%=page%>)">>>></button>
-            <% } %>
-		</div>
+	            <a><%=pageIndex + 1%>/<%=pageCount%></a>
+
+	            <% if(nextPage) { %>
+		            <% var page = pageIndex + 1 %>
+		            <button class="page" onclick="goToPage(<%=page%>)">
+	            <% } else { %>
+		            <button class="page" disabled>
+	            <% } %>
+	            >>></button>
+			</div>
+		</div>		
 	</body>
 </html>
