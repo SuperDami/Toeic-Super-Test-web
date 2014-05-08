@@ -84,6 +84,7 @@ app.post('/postNewTest', function(req, res) {
 	var zipUrl = req.body.zipUrl;
 	var price = req.body.price;
 
+	console.log("post new test id", testId);
 	if (testId.length) {
 		Test.findOne({testId: testId}, function(err, test){
 			if (!test) {
@@ -94,15 +95,20 @@ app.post('/postNewTest', function(req, res) {
 				test.zipUrl = zipUrl;
 				test.price = price;
 				test.save(function(err) {
+					if (err) {
+						console.log("save new test err:", err);
+					}
 					res.end(JSON.stringify({err:err, url:"/testList"}));
 				});
 			}
 			else {
+				console.log("testId existed");
 				res.end(JSON.stringify({testId:"testId existed"}));
 			}
 		})
 	}
 	else {
+		console.log("testId can not be nil");
 		res.end(JSON.stringify({testId:"testId can not be nil"}));
 	}
 })

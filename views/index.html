@@ -36,23 +36,27 @@
 	</script>
 	</head>
 	<body>
-		<div id='container' style="width:100%;">
-			<div id='header'>
-				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4'/>
+		<div id='container' style="width:100%; height:100%" style="text-align:center;">
+			<div id='header' style="width:100%; text-align:center;">
+				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4' style="margin:0 auto"  />
 			</div>
 			<form>
 				<input type='button' name='button' id='popularBtn' value='人気 コンテンシ' onclick="collectionSelect(this)">
 				<input type='button' name='button' id='myTest' value='マイ ライブラリ' onclick="collectionSelect(this)">
 				<input type='button' name='button' id='restore' value='リストア' onclick='collectionSelect(this)'>
 			</form>
-
 			<hr/>
 
-			<div id='grid'>
-                <% for (var i = 0; i < testList.length; i++) { 
+            <% var gridHeight = 250*Math.ceil(testList.length / 4); %>
+			<div style="width:100%; height:<%=gridHeight%>px; text-align:center;">
+                <div style="position:absolute">
+                <% 
+                    for (var i = 0; i < testList.length; i++) { 
                     var test = testList[i];
-                    %>
-                    <div style='width:140px; height:230px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; text-align: center; float:left;'>
+                    var left = 20 + (i % 4) * 140 + ((i % 4) - 1)*10;
+                    var top = Math.floor(i/4)*230 + Math.floor(i/4 + 1)*10;
+                %>
+                    <div style='width:140px; height:230px; float:left; text-align: center; position:absolute; left:<%=left%>px; top:<%=top%>px'>
                         <img src='<%=test.coverImageUrl%>' class='cellCover'>
                         <p style="clear:both; margin-top: 0px; margin-bottom: 0px; font-size:12px;"><%=test.title%></p>
                         <% if(!test.downloaded) {%>
@@ -62,8 +66,10 @@
                         <% } %>
                     </div>
                 <% } %>
+                </div>
 			</div>
-            <div style="width:100%; float:left; text-align:center">
+
+            <div style="width:100%; height:40px; text-align:center;">
                 <% if(prePage) { %>
                     <% var page = pageIndex - 1 %>
                     <button class="page" onclick="goToPage(<%=page%>)">
