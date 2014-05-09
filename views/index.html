@@ -7,32 +7,37 @@
     	input {float:both; margin-left: 20px; font-size: 16px; border: none; background: none;}
     	input#restore {float:right; margin-right: 20px};
     	hr {color: gray;}
-    	.downloadBtn {border-width: 1px; border-radius: 2px; border-color:black; margin-top: 0px; margin-bottom: 0px; clear: both; color:white; background-color: #72AB12; font-size:12px;}
+    	.downloadBtn {width:120px; height: 30px; border-width: 1px; border-radius: 2px; border-color:black; margin-top: 0px; margin-bottom: 0px; clear: both; color:white; background-color: #72AB12; font-size:12px;}
     	.cellCover {width:140px; height: 180px;}
     </style>
     <script type="text/javascript">
     	function collectionSelect(sender) {
-    		var buttons = document.getElementsByName("button");
-    		for (var i = buttons.length - 1; i >= 0; i--) {
-    			if (buttons[i] !== sender) {
-    				buttons[i].style.color = "gray";
-    			}
-    			else {
-    				buttons[i].style.color = "black";
-    			}
-    		};
-    	}
-
-    	function downloadTest(test) {
-            console.log(test);
-			var url = 'com.alc.topic.supertest://' + encodeURIComponent(test.testId) + '/' + encodeURIComponent(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
-			window.location = url; 
+            window.location = 'com.alc.topic.supertest.category://' + encodeURIComponent(sender.id); 
     	}
 
         function goToPage(pageIndex) {
-            window.location = "?page=" + pageIndex; 
+            window.location = "com.alc.topic.supertest.goToPage://" + encodeURIComponent(pageIndex); 
         }
 
+    	function downloadTest(test) {
+            var json = JSON.stringify(test);
+
+            var form = document.createElement("form");
+            form.setAttribute("action", "/downloadTest");
+            form.setAttribute("method", "post");
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", "test");
+            hiddenField.setAttribute("value", json);
+
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+    	}
+
+        function purchase(test) {
+            window.location = 'com.alc.topic.supertest.purchase://' + encodeURIComponent(test.testId);
+        }
 	</script>
 	</head>
 	<body>
@@ -41,9 +46,9 @@
 				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4' style="margin:0 auto"  />
 			</div>
 			<form>
-				<input type='button' name='button' id='popularBtn' value='人気 コンテンシ' onclick="collectionSelect(this)">
-				<input type='button' name='button' id='myTest' value='マイ ライブラリ' onclick="collectionSelect(this)">
-				<input type='button' name='button' id='restore' value='リストア' onclick='collectionSelect(this)'>
+				<input type='button' id='popular' value='人気 コンテンシ' onclick="collectionSelect(this)">
+				<input type='button' id='myLibrary' value='マイ ライブラリ' onclick="collectionSelect(this)">
+				<input type='button' id='restore' value='リストア' onclick='collectionSelect(this)'>
 			</form>
 			<hr/>
 
@@ -59,10 +64,12 @@
                     <div style='width:140px; height:230px; float:left; text-align: center; position:absolute; left:<%=left%>px; top:<%=top%>px'>
                         <img src='<%=test.coverImageUrl%>' class='cellCover'>
                         <p style="clear:both; margin-top: 0px; margin-bottom: 0px; font-size:12px;"><%=test.title%></p>
-                        <% if(!test.downloaded) {%>
+                        <% if(test.status === "downloaded") {%>
+                            <button class='downloadBtn' disabled style="background-color: gray">ダウンロード済み</button>
+                        <% } else if(test.status === "purchased") { %>
                             <button class='downloadBtn' onclick='downloadTest(<%-JSON.stringify(test)%>)'>ダウンロード</button>
                         <% } else { %>
-                            <p style="color:gray; clear:both; margin-top: 0px; margin-bottom: 0px; font-size:12px;">ダウンロード済み</p>
+                            <button class='downloadBtn' onclick='purchase(<%-JSON.stringify(test)%>)'>¥<%=test.price%></button>
                         <% } %>
                     </div>
                 <% } %>
