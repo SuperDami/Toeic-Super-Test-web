@@ -99,6 +99,52 @@ app.get('/myLibrary', function(req, res) {
 	});
 });
 
+app.get('/popular', function(req, res){
+		var perPage = 12
+  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+
+	Test.find(null, null, {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}}, function(filterErr, results){
+		Test.count().exec(function(countErr, count){
+			if (filterErr || countErr) {
+				res.send(filterErr || countErr);
+			}
+			else {
+				var query = url.parse(req.url, true).query;
+				if (query['purchasedTestId']) {
+					var testIdArray = query['purchasedTestId'].split(',');
+					for (var i = 0; i < testIdArray.length; i++) {
+						testId = testIdArray[i];
+						for (var j = 0; j < results.length; j++) {
+							if (testId == results[j]["testId"]) {
+								results[j]['status'] = "purchased";
+							};
+						};
+					};
+				}
+				if (query['fetchedTestId']) {
+					var testIdArray = query['fetchedTestId'].split(',');
+					for (var i = 0; i < testIdArray.length; i++) {
+						testId = testIdArray[i];
+						for (var j = 0; j < results.length; j++) {
+							if(testId === results[j]["testId"]) {
+								results[j]['status'] = "downloaded";
+							}
+						};
+					};
+				}
+
+				var pageCount = Math.ceil(count/perPage);
+				res.render('index.html', 
+					{testList: results,
+					pageIndex: page,
+					pageCount: pageCount,
+			 		prePage: (page > 0 && perPage*page < count),
+			 		nextPage: (perPage*page + perPage < count)});
+			}
+		});
+	});
+})
+
 app.get('/testList', function(req, res) {
 	var perPage = 20
 	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
