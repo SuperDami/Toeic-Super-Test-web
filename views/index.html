@@ -12,16 +12,16 @@
     </style>
     <script type="text/javascript">
     	function collectionSelect(category) {
-            window.location = "com.alc.topic.supertest.category://" + encodeURIComponent("category=" + category);
+            window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent(category);
     	}
 
         function goToPage(pageIndex, category) {
-            window.location = "com.alc.topic.supertest.goToPage://" + encodeURIComponent("page=" + pageIndex) + "&" + encodeURIComponent("category=" + category); 
+            window.location = "com.alc.topic.supertest.goToPage://" + "page=" + encodeURIComponent(pageIndex) + "&category=" + encodeURIComponent(category); 
         }
 
         function purchase(test, category) {
             console.log("category :", category);
-            window.location = 'com.alc.topic.supertest.purchase://' + encodeURIComponent("testId=" + test.testId) + "&" + encodeURIComponent("category=" + category);
+            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&category=" + encodeURIComponent(category);
         }
 
     	function downloadTest(test, category) {

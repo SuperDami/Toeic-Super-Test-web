@@ -270,7 +270,8 @@ app.post('/downloadTest', function(req, res){
 		});
 	});
 
-	var url = 'com.alc.topic.supertest://' + encodeURIComponent(test.testId) + '/' + encodeURIComponent(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
+	// var url = 'com.alc.topic.supertest://' + encodeURIComponent(test.testId) + '/' + encodeURIComponent(test.title) + '/' + encodeURIComponent(test.zipUrl) + '/' + encodeURIComponent(test.coverImageUrl);
+	var url = 'com.alc.topic.supertest://' + "testId=" + encodeURIComponent(test.testId) + '&title=' + encodeURIComponent(test.title) + '&zipUrl=' + encodeURIComponent(test.zipUrl) + '&coverImageUrl=' + encodeURIComponent(test.coverImageUrl);
 	res.redirect(url);
 })
 app.listen(process.env.PORT || 3000);
