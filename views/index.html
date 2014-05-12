@@ -11,15 +11,20 @@
     	.cellCover {width:140px; height: 180px;}
     </style>
     <script type="text/javascript">
-    	function collectionSelect(sender) {
-            window.location = 'com.alc.topic.supertest.category://' + encodeURIComponent(sender.id); 
+    	function collectionSelect(category) {
+            window.location = "com.alc.topic.supertest.category://" + encodeURIComponent("category=" + category);
     	}
 
-        function goToPage(pageIndex) {
-            window.location = "com.alc.topic.supertest.goToPage://" + encodeURIComponent(pageIndex); 
+        function goToPage(pageIndex, category) {
+            window.location = "com.alc.topic.supertest.goToPage://" + encodeURIComponent("page=" + pageIndex) + "&" + encodeURIComponent("category=" + category); 
         }
 
-    	function downloadTest(test) {
+        function purchase(test, category) {
+            console.log("category :", category);
+            window.location = 'com.alc.topic.supertest.purchase://' + encodeURIComponent("testId=" + test.testId) + "&" + encodeURIComponent("category=" + category);
+        }
+
+    	function downloadTest(test, category) {
             var json = JSON.stringify(test);
 
             var form = document.createElement("form");
@@ -34,10 +39,6 @@
             document.body.appendChild(form);
             form.submit();
     	}
-
-        function purchase(test) {
-            window.location = 'com.alc.topic.supertest.purchase://' + encodeURIComponent(test.testId);
-        }
 	</script>
 	</head>
 	<body>
@@ -46,9 +47,9 @@
 				<img src='http://www.eurocentres.com/sites/default/files/styles/ec_header_image/public/course_toeic_panorama.jpg?itok=lN6Xrgx4' style="margin:0 auto"  />
 			</div>
 			<form>
-				<input type='button' id='popular' value='人気 コンテンシ' onclick="collectionSelect(this)">
-				<input type='button' id='myLibrary' value='マイ ライブラリ' onclick="collectionSelect(this)">
-				<input type='button' id='restore' value='リストア' onclick='collectionSelect(this)'>
+				<input type='button' value='人気 コンテンシ' onclick="collectionSelect('popular')">
+				<input type='button' value='マイ ライブラリ' onclick="collectionSelect('myLibrary')">
+				<input type='button' value='リストア' onclick="collectionSelect('restore')">
 			</form>
 			<hr/>
 
@@ -67,9 +68,9 @@
                         <% if(test.status === "downloaded") {%>
                             <button class='downloadBtn' disabled style="background-color: gray">ダウンロード済み</button>
                         <% } else if(test.status === "purchased") { %>
-                            <button class='downloadBtn' onclick='downloadTest(<%-JSON.stringify(test)%>)'>ダウンロード</button>
+                            <button class='downloadBtn' onclick='downloadTest(<%-JSON.stringify(test)%>, "<%=category%>")'>ダウンロード</button>
                         <% } else { %>
-                            <button class='downloadBtn' onclick='purchase(<%-JSON.stringify(test)%>)'>¥<%=test.price%></button>
+                            <button class='downloadBtn' onclick='purchase(<%-JSON.stringify(test)%>, "<%=category%>")'>¥<%=test.price%></button>
                         <% } %>
                     </div>
                 <% } %>
@@ -79,7 +80,7 @@
             <div style="width:100%; height:40px; text-align:center;">
                 <% if(prePage) { %>
                     <% var page = pageIndex - 1 %>
-                    <button class="page" onclick="goToPage(<%=page%>)">
+                    <button class="page" onclick="goToPage(<%=page%>, '<%=category%>')">
                 <% } else { %>
                     <button class="page" disabled>
                 <% } %>
@@ -89,7 +90,7 @@
 
                 <% if(nextPage) { %>
                     <% var page = pageIndex + 1 %>
-                    <button class="page" onclick="goToPage(<%=page%>)">
+                    <button class="page" onclick="goToPage(<%=page%>, '<%=category%>')">
                 <% } else { %>
                     <button class="page" disabled>
                 <% } %>

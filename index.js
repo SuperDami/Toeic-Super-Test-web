@@ -45,7 +45,9 @@ app.get('/', function(req, res) {
 
 				var pageCount = Math.ceil(count/perPage);
 				res.render('index.html', 
-					{testList: results,
+					{
+					category: "",
+					testList: results,
 					pageIndex: page,
 					pageCount: pageCount,
 			 		prePage: (page > 0 && perPage*page < count),
@@ -89,7 +91,9 @@ app.get('/myLibrary', function(req, res) {
 
 				var pageCount = Math.ceil(count/perPage);
 				res.render('index.html', 
-					{testList: results,
+					{
+					category: "myLibrary",
+					testList: results,
 					pageIndex: page,
 					pageCount: pageCount,
 			 		prePage: (page > 0 && perPage*page < count),
@@ -135,7 +139,9 @@ app.get('/popular', function(req, res){
 
 				var pageCount = Math.ceil(count/perPage);
 				res.render('index.html', 
-					{testList: results,
+					{
+					category: "popular",
+					testList: results,
 					pageIndex: page,
 					pageCount: pageCount,
 			 		prePage: (page > 0 && perPage*page < count),
