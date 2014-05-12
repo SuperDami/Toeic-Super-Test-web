@@ -74,7 +74,7 @@ app.get('/myLibrary', function(req, res) {
 	};
 
 	Test.find({'testId':{$in:testIdArray}}, null, {skip:perPage*page, limit:perPage}, function(filterErr, results){
-		Test.count().exec(function(countErr, count){
+		Test.find({'testId':{$in:testIdArray}}, null, null).count().exec(function(countErr, count){
 			if (filterErr || countErr) {
 				res.send(filterErr || countErr);
 			}
