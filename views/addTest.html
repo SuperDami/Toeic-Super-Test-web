@@ -12,6 +12,7 @@
 	    <script type="text/javascript">
 	        function postNewTest() {
 				$.post("/postNewTest", $("#postTestForm").serialize(), function(data){
+					console.log($("#published").checked);
 					if (data.url) {
 						window.location = data.url;
 					}
@@ -43,10 +44,11 @@
 	    			<% } else { %>
 	    				   <input type="text" name="testId" id="testId">
 	    			<% } %>
+		    		<% if(test) { %>
+		    			<input type="text" name="lastTestId" id="lastTestId" value=<%=test["testId"]%> hidden="true">
+		    		<% } %>	    		
 	    		</div>
-	    		<% if(test) { %>
-	    			<input type="text" name="lastTestId" id="lastTestId" value=<%=test["testId"]%> hidden="true">
-	    		<% } %>
+
 	    		<div class='inputText'>
 	    			<label>title</label>
 	    			<%if(test) {%>
@@ -77,7 +79,23 @@
 	    				   <input type="text" name="price" id="price" value=<%=test["price"]%>>
 	    			<% } else { %>
 	    				   <input type="text" name="price" id="price">
+	    			<% } %>	    		
+	    		</div>
+	    		<div class='inputText'>
+					<label>productId</label>	
+	    			<%if(test) {%>
+	    				   <input type="text" name="productId" id="productId" value=<%=test["productId"]%>>
+	    			<% } else { %>
+	    				   <input type="text" name="productId" id="productId">
 	    			<% } %>
+	    		</div>	    		
+	    		<div class="inputText">
+					<label>published</label>	
+	    			<%if(test["published"]) {%>
+	    				   <input type="checkbox" name="published" id="published" checked>
+	    			<% } else { %>
+	    				   <input type="checkbox" name="published" id="published">
+	    			<% } %>	    			
 	    		</div>
 	    	</form>    		
 	    	<button type="submit" <% if(test){ %>onclick="updateTest()"<% } else { %>onclick="postNewTest()"<% } %>>Post</button>

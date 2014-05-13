@@ -8,6 +8,8 @@ var Test = mongoose.Schema({
     zipUrl: String,
     price: Number,    
     created_at: Date,
+    productId: String,
+    published: Boolean,
     downloadCount: Number
 });
 

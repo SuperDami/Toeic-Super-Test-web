@@ -21,7 +21,7 @@
 
         function purchase(test, category) {
             console.log("category :", category);
-            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&category=" + encodeURIComponent(category);
+            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&productId=" + encodeURIComponent(test.productId) + "&category=" + encodeURIComponent(category);
         }
 
     	function downloadTest(test, category) {
