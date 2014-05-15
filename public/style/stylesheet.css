@@ -43,6 +43,7 @@ div.tipContent {
 	margin-top: 0px; margin-bottom: 0px; 
 	clear: both; color:white; 
 	background: -webkit-linear-gradient(top,#60BF00,#52A400); 
+	box-shadow: 0px 1px 2px #A8A8A8;
 	font-size:12px;
 	font-family:"Hiragino Kaku Gothic ProN" 
 }
@@ -54,6 +55,7 @@ div.tipContent {
 	margin-top: 0px; margin-bottom: 0px; 
 	clear: both; color:white; 
 	background: -webkit-linear-gradient(top,#4DA6FF,#0F87FF); 
+	box-shadow: 0px 1px 2px #A8A8A8;
 	font-size:12px;
 	font-family:"Hiragino Kaku Gothic ProN" 
 }
@@ -66,11 +68,13 @@ div.tipContent {
 }
 
 .cellCover {
+	box-shadow: 0px 2px 3px #A8A8A8;
 	width:141px; height: 200px;
 }
 
 div.title {
 	width: 100%; height: 33px;
+	text-align: center;
 	clear:both;
 	margin-top: 0px; margin-bottom: 0px;
 	font-size:12px;
