@@ -42,7 +42,7 @@ app.get('/', function(req, res) {
 					category: "",
 					testList: results,
 					pageIndex: page,
-					pageCount: pageCount,
+					pageCount: pageCount ? pageCount : 1,
 			 		prePage: (page > 0 && perPage*page < count),
 			 		nextPage: (perPage*page + perPage < count)});
 			}			
@@ -71,9 +71,6 @@ app.get('/myLibrary', function(req, res) {
 					var productId = test["productId"];
 					var testId = test["testId"];
 
-					console.log(productId);
-					console.log(productIdArray);
-
 					if (productIdArray.indexOf(productId) > -1) {
 						test['status'] = "purchased";
 					}
@@ -88,7 +85,7 @@ app.get('/myLibrary', function(req, res) {
 					category: "myLibrary",
 					testList: results,
 					pageIndex: page,
-					pageCount: pageCount,
+					pageCount: pageCount ? pageCount : 1,
 			 		prePage: (page > 0 && perPage*page < count),
 			 		nextPage: (perPage*page + perPage < count)});
 			}
@@ -132,7 +129,7 @@ app.get('/popular', function(req, res){
 					category: "popular",
 					testList: results,
 					pageIndex: page,
-					pageCount: pageCount,
+					pageCount: pageCount ? pageCount : 1,
 			 		prePage: (page > 0 && perPage*page < count),
 			 		nextPage: (perPage*page + perPage < count)});
 			}			
@@ -155,7 +152,7 @@ app.get('/testList', function(req, res) {
 			res.render('testList.html', {testList: tests,
 			 columnName:["title", "testId", "price", "created_at", "productId", "published", "downloadCount"],
 			 pageIndex: page,
-			 pageCount: pageCount,
+			 pageCount: pageCount ? pageCount : 1,
 			 prePage: (page > 0 && perPage*page < count),
 			 nextPage: (perPage*page + perPage < count)});
 		});

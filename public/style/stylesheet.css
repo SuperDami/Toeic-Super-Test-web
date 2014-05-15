@@ -1,3 +1,88 @@
+<style type="text/css">
+
 #container {
 	width: 600px
 }
+
+input {
+	float:both;
+	margin-left: 20px;
+	font-size: 16px;
+	border: none;
+	background: none;
+}
+
+input#restore {
+	float:right; 
+	margin-right: 20px
+};
+
+hr {
+	color: gray;
+}
+
+div.tipTitle {
+	text-align: center;
+	margin:45px auto 22px auto;
+	width: 270px; height: 30px;
+	font-size:18px; font-family:"Hiragino Kaku Gothic ProN";
+	color:#333333;
+}
+
+div.tipContent {
+	text-align: left;
+	margin:0px auto 0px auto;
+	width: 270px; height: 68px;
+	font-size:16px; font-family:"Hiragino Kaku Gothic ProN";
+	color:#999999;
+}
+
+.downloadBtn {
+	width:88px; height: 24px; 
+	border-width: 1px; border-radius: 2px; border-color:#336600; 
+	margin-top: 0px; margin-bottom: 0px; 
+	clear: both; color:white; 
+	background: -webkit-linear-gradient(top,#60BF00,#52A400); 
+	font-size:12px;
+	font-family:"Hiragino Kaku Gothic ProN" 
+}
+
+.purchaseBtn {
+	width:48px; height:24px; 
+	border-width: 1px; border-radius: 2px; border-color:#0059B2;  
+	margin-top: 0px; margin-bottom: 0px; 
+	clear: both; color:white; 
+	background: -webkit-linear-gradient(top,#4DA6FF,#0F87FF); 
+	font-size:12px;
+	font-family:"Hiragino Kaku Gothic ProN" 
+}
+
+.downloadedLabel {
+	width: 96px; height: 21px;
+	color: #AAAAAA;
+	font-size: 12px;
+	font-family:"Hiragino Kaku Gothic ProN" 
+}
+
+.cellCover {
+	width:141px; height: 200px;
+}
+
+div.title {
+	width: 100%; height: 33px;
+	clear:both;
+	margin-top: 0px; margin-bottom: 0px;
+	font-size:12px;
+	font-family:"Hiragino Kaku Gothic ProN" 
+}
+
+div.cell {
+	width:140px; height:270px;
+}
+
+input.categoryBtn {
+	margin: 0 auto;
+	width: 108px; height: 27px;
+	font-size:16px; font-family:"Hiragino Kaku Gothic ProN";
+}
+</style>
