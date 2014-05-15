@@ -34,7 +34,7 @@
     	}
 	</script>
 	</head>
-	<body>
+	<body style="margin: 0">
 		<div id='container' style="width:600px; height:100%; text-align:center;">
 			<div id='header' style="width:100%; text-align:center;">
 				<img src='/images/header_ad.png' style="width:100%; margin:0 auto"  />
@@ -42,9 +42,9 @@
             <div style="width:100%; height:27px;">
                 <input type='button' class="categoryBtn" style="float:left" value='人気 コンテンシ' onclick="collectionSelect('popular')">
                 <input type='button' class="categoryBtn" style="float:left; margin-left:16px" value='マイ•ライブラリ' onclick="collectionSelect('myLibrary')">
-                <input type='button' class="categoryBtn" style="float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="collectionSelect('restore')">
+                <input type='button' class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="collectionSelect('restore')">
             </div>
-            <hr style="color:#AAAAAA;" noshade>
+            <hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade>
 
             <% var gridHeight = 290*Math.ceil(testList.length / 4); %>
             <% if ((!testList.length)&&(category==='myLibrary')) { %>
@@ -54,6 +54,7 @@
                     <div class="tipTitle" row="1">表示するコンテンツがありません</div>
                     <div class="tipContent" row="3">［リストア］ボタンをタップし、既にご購入済みのコンテンツは課金されずにダウンロードいただけます。</div>
                 </div>
+            </div>
             <% } else { %>
                 <div style="width:100%; height:<%=gridHeight%>px; text-align:center;">
                 <div style="position:absolute">
@@ -75,10 +76,8 @@
                         <% } %>
                     </div>
                 <% } %>
-                </div>                
-            <% } %>
-			</div>
-
+                </div>  
+            </div> 
             <div style="width:100%; height:40px; text-align:center;">
                 <% if(prePage) { %>
                     <% var page = pageIndex - 1 %>
@@ -97,7 +96,8 @@
                     <button class="page" disabled>
                 <% } %>
                 >>></button>
-            </div>
+            </div>             
+            <% } %>
 		</div>
 	</body>
 </html>
