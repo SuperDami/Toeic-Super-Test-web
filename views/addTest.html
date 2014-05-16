@@ -91,11 +91,15 @@
 	    		</div>	    		
 	    		<div class="inputText">
 					<label>published</label>	
-	    			<%if(test["published"]) {%>
+	    			<%if(test) {%>
+	    			<%	if (test["published"]) { %>
 	    				   <input type="checkbox" name="published" id="published" checked>
-	    			<% } else { %>
+	    			<%	} else {%>
 	    				   <input type="checkbox" name="published" id="published">
-	    			<% } %>	    			
+	    			<% 	} %> 
+	    			<%} else {%>
+	    				<input type="checkbox" name="published" id="published">
+	    			<%}%>	    			
 	    		</div>
 	    	</form>    		
 	    	<button type="submit" <% if(test){ %>onclick="updateTest()"<% } else { %>onclick="postNewTest()"<% } %>>Post</button>
