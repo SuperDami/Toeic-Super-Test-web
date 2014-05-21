@@ -3,21 +3,173 @@
     <head>
     <title>Toeic</title>
     <link rel='stylesheet' type='text/css' href='/style/stylesheet.css'/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/javascript">
-    	function collectionSelect(category) {
-            window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent(category);
+        var testList;
+        var localTestIds = {};
+        var page = 0;
+        var category = "";
+
+        function clientPurchasedProductId(productId) {
+            localTestIds["purchasedTestId"].push(productId);
+            console.log("refresh local test ",localTestIds);
+
+            for (var i in testList) {
+                var test = testList[i];
+                if (test.productId === productId) {
+                    console.log("refresh ", i);
+                    test.status = "purchased"
+                    $("#selectionGrid div.cell button")[i].remove();
+                    var button = createButtonWith(test);
+                    $("#selectionGrid div.cell:eq(" + i + ")").append(button);
+                }
+            }
+        }
+
+        function clientDownloadedTestId(testId) {
+            localTestIds["fetchedTestId"].push(testId);
+            console.log("refresh local test ",localTestIds);
+
+            for (var i in testList) {
+                var test = testList[i];
+                if(test.testId === testId) {
+                    console.log("refresh ", i);
+                    test.status = "downloaded"
+                    $("#selectionGrid div.cell button")[i].remove();
+                    var button = createButtonWith(test);
+                    $("#selectionGrid div.cell:eq(" + i + ")").append(button);
+                }
+            }
+        }
+
+        function clientLoadPageWith(testIds, categoryName) {
+            console.log(testIds);
+            localTestIds = testIds;
+            category = categoryName;
+            page = 0;
+            refreshCategoryContent(category, page, localTestIds);
+        }
+
+        function createButtonWith(test) {
+            var downloadBtn;
+            if (test.status === "downloaded") {
+                downloadBtn = $("<label>");
+                downloadBtn.addClass("downloadedLabel").text("ダウンロード済み");
+            } else if (test.status === "purchased") {
+                downloadBtn = $("<button>");
+                downloadBtn.addClass("downloadBtn").text("ダウンロード");
+                downloadBtn.click(function(){ 
+                    downloadTest(test);
+                });
+            } else {
+                downloadBtn = $("<button>");
+                downloadBtn.addClass("purchaseBtn").text("¥" + test.price);
+                downloadBtn.click(function(){ 
+                    purchaseTest(test);
+                });
+            }
+            return downloadBtn;
+        }
+
+        function refreshCategoryContent(categoryName, page, params) {
+            var testIdsString = params.fetchedTestId.join(',');
+            var productIdSstring = params.purchasedTestId.join(',');
+            $.get("/contentOnly", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdSstring}, function(data){
+                console.log("jaquery :", data);
+                testList = data.testList;
+                var baseDiv = $("#selectionGrid div");
+                baseDiv.empty();
+                if (categoryName === "myLibrary" && (!testList.length)) {
+                    var frame = $("<div>").css({"text-align":"center", "height":"340px"});
+                    var base = $("<div>").css({"width":"100%", "height":"auto", "text-align":"center"});
+                    var icon = $("<img>").attr({src:"/images/restore_icon.png"}).css({"margin":"40px auto 0px auto"});
+                    var title = $("<div>").addClass("tipTitle").attr({rows:"1"}).text("表示するコンテンツがありません");
+                    var content = $("<div>").addClass("tipContent").attr({rows:"3"}).text("［リストア］ボタンをタップし、既にご購入済みのコンテンツは課金されずにダウンロードいただけます。");
+                    frame.append(base).append(icon).append(title).append(content);
+                    baseDiv.css({"position":"relative"});
+                    baseDiv.append(frame);
+                    $("#pageControl").hide();
+                }
+                else {
+                    var gridHeight = 290*Math.ceil(testList.length / 4);
+                    var leftMargin = Math.floor((600 - 4 * 140 - 3 * 10) / 2.0);
+                    $("#selectionGrid").height(gridHeight);
+                    for (var i in testList) {
+                        var test = testList[i];
+                        var productId = test["productId"];
+                        var testId = test["testId"];
+
+                        if (localTestIds["purchasedTestId"].indexOf(productId) > -1) {
+                            test.status = "purchased";
+                            console.log(test + " set purchased");
+                        }
+                        if (localTestIds["fetchedTestId"].indexOf(testId) > -1) {
+                            test.status = "downloaded";
+                            console.log(test + " set downloaded");
+                        }
+                    };
+
+                    for (var i in testList) {
+                        var test = testList[i];
+                        var left = leftMargin + (i % 4) * 140 + (i % 4)*10;
+                        var top = Math.floor(i/4)*270 + Math.floor(i/4 + 1)*10;
+                        var cell = $("<div>").addClass("cell");
+                        cell.css({"float":"left", "text-align": "center", "position":"absolute", "left":left + "px", "top": top + "px"});
+
+                        var imageCover = $("<img>").addClass("cellCover").attr({src:test.coverImageUrl});
+                        
+                        var title = $("<div>").addClass("title").attr({rows:"2"}).text(test.title);
+
+                        var downloadBtn = createButtonWith(test);
+
+                        cell.append(imageCover).append(title).append(downloadBtn);
+                        baseDiv.css({"position":"absolute"});
+                        baseDiv.append(cell);
+                    }
+
+                    var pageIndex = data.pageIndex;
+                    var pageCount = data.pageCount;
+
+                    $("#pageControl").show();
+                    var preBtn = $("#pageControl button")[0]; 
+                    var nextBtn = $("#pageControl button")[1];
+                    preBtn.disabled = data.prePage ? false : true;
+                    nextBtn.disabled = data.nextPage ? false : true;
+
+                    preBtn.onclick = function(){ 
+                        goToPageIndex(pageIndex - 1); };
+                    nextBtn.onclick = function(){
+                        goToPageIndex(pageIndex + 1); };
+                    $("#pageControl a").text((pageIndex + 1) + "/" + pageCount);
+                }
+            });
+        }
+
+    	function collectionSelect(categoryName) {
+            page = 0;
+            category = categoryName;
+            refreshCategoryContent(categoryName, 0, localTestIds);
+            // window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent(category);
     	}
 
-        function goToPage(pageIndex, category) {
-            window.location = "com.alc.topic.supertest.goToPage://" + "page=" + encodeURIComponent(pageIndex) + "&category=" + encodeURIComponent(category); 
+        function goToPageIndex(pageIndex) {
+            console.log("go to page", pageIndex);
+            page = pageIndex;
+            refreshCategoryContent(category, pageIndex, localTestIds);
+            // window.location = "com.alc.topic.supertest.goToPage://" + "page=" + encodeURIComponent(pageIndex) + "&category=" + encodeURIComponent(category); 
         }
 
-        function purchase(test, category) {
-            console.log("category :", category);
-            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&productId=" + encodeURIComponent(test.productId) + "&category=" + encodeURIComponent(category);
+        function restore() {
+            window.location = "com.alc.topic.supertest.restore://";
+            // window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent("restore");
         }
 
-    	function downloadTest(test, category) {
+        function purchaseTest(test) {
+            console.log("purchase", test);
+            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&productId=" + encodeURIComponent(test.productId);
+        }
+
+    	function downloadTest(test) {
             var json = JSON.stringify(test);
 
             var form = document.createElement("form");
@@ -42,63 +194,19 @@
             <div style="width:100%; height:27px;">
                 <input type='button' class="categoryBtn" style="float:left" value='人気 コンテンシ' onclick="collectionSelect('popular')">
                 <input type='button' class="categoryBtn" style="float:left; margin-left:16px" value='マイ•ライブラリ' onclick="collectionSelect('myLibrary')">
-                <input type='button' class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="collectionSelect('restore')">
+                <input type='button' class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="restore()">
             </div>
             <hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade>
 
-            <% var gridHeight = 290*Math.ceil(testList.length / 4); %>
-            <% if ((!testList.length)&&(category==='myLibrary')) { %>
-                <div style="text-align:center; height:340px">
-                <div style="width:100%; height:auto; text-align:center;">
-                    <img src="/images/restore_icon.png" style="margin:40px auto 0px auto">
-                    <div class="tipTitle" row="1">表示するコンテンツがありません</div>
-                    <div class="tipContent" row="3">［リストア］ボタンをタップし、既にご購入済みのコンテンツは課金されずにダウンロードいただけます。</div>
-                </div>
-            </div>
-            <% } else { %>
-                <div style="width:100%; height:<%=gridHeight%>px; text-align:center;">
+            <div id="selectionGrid" style="width:100%; text-align:center;">
                 <div style="position:absolute">
-                <% 
-                    var leftMargin = Math.floor((600 - 4 * 140 - 3 * 10) / 2.0);
-                    for (var i = 0; i < testList.length; i++) { 
-                    var test = testList[i];
-                    var left = leftMargin + (i % 4) * 140 + (i % 4)*10;
-                    var top = Math.floor(i/4)*270 + Math.floor(i/4 + 1)*10;
-                %>
-                    <div class="cell" style='float:left; text-align: center; position:absolute; left:<%=left%>px; top:<%=top%>px'>
-                        <img class="cellCover" src='<%=test.coverImageUrl%>'>
-                        <div class="title" rows="2"><%=test.title%></div>
-                        <% if(test.status === "downloaded") {%>
-                            <label class="downloadedLabel">ダウンロード済み</label>
-                        <% } else if(test.status === "purchased") { %>
-                            <button class='downloadBtn' onclick='downloadTest(<%-JSON.stringify(test)%>, "<%=category%>")'>ダウンロード</button>
-                        <% } else { %>
-                            <button class='purchaseBtn' onclick='purchase(<%-JSON.stringify(test)%>, "<%=category%>")'>¥<%=test.price%></button>
-                        <% } %>
-                    </div>
-                <% } %>
                 </div>  
             </div> 
-            <div style="width:100%; height:40px; text-align:center;">
-                <% if(prePage) { %>
-                    <% var page = pageIndex - 1 %>
-                    <button class="page" onclick="goToPage(<%=page%>, '<%=category%>')">
-                <% } else { %>
-                    <button class="page" disabled>
-                <% } %>
-                <<<</button>
-
-                <a><%=pageIndex + 1%>/<%=pageCount%></a>
-
-                <% if(nextPage) { %>
-                    <% var page = pageIndex + 1 %>
-                    <button class="page" onclick="goToPage(<%=page%>, '<%=category%>')">
-                <% } else { %>
-                    <button class="page" disabled>
-                <% } %>
-                >>></button>
+            <div id="pageControl" style="width:100%; height:40px; text-align:center;">
+                <button class="page"><<<</button>
+                <a></a>
+                <button class="page">>>></button>
             </div>             
-            <% } %>
 		</div>
 	</body>
 </html>

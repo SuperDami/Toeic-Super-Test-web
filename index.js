@@ -10,129 +10,48 @@ app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
 app.get('/', function(req, res) {
-	var perPage = 12
-  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
-
-	Test.find({"published":true}, null, {skip:perPage*page, limit:perPage}, function(filterErr, results){
-		Test.find({"published":true}).count().exec(function(countErr, count){
-			if (filterErr || countErr) {
-				res.send(filterErr || countErr);
-			}
-			else {
-				var query = url.parse(req.url, true).query;
-				var productIdArray = query['purchasedTestId']? query['purchasedTestId'].split(','):[];
-				var testIdArray = query['purchasedTestId']? query['fetchedTestId'].split(','):[];
-
-				for (var i in results) {
-					var test = results[i];
-					var productId = test["productId"];
-					var testId = test["testId"];
-
-					if (productIdArray.indexOf(productId) > -1) {
-						test['status'] = "purchased";
-					}
-					if (testIdArray.indexOf(testId) > -1) {
-						test['status'] = "downloaded";
-					}
-				};
-
-				var pageCount = Math.ceil(count/perPage);
-				res.render('index.html', 
-					{
-					category: "",
-					testList: results,
-					pageIndex: page,
-					pageCount: pageCount ? pageCount : 1,
-			 		prePage: (page > 0 && perPage*page < count),
-			 		nextPage: (perPage*page + perPage < count)});
-			}			
-		});
-	});
+	res.render('index.html');
 });
 
-app.get('/myLibrary', function(req, res) {
+app.get('/contentOnly', function(req, res){
+	var category = req.query.category;
+	var page = req.query.page;
 	var perPage = 12
-  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
-	var query = url.parse(req.url, true).query;
+  	  , page = page > 0 ? Math.floor(page) : 0;
+  	var testIdArray = req.query.fetchedTestId.split(',');
+	var productIdArray = req.query.purchasedTestId.split(',');
 
-	var productIdArray = query['purchasedTestId'].split(',');
-	var testIdArray = query['fetchedTestId'].split(',');
+	console.log("productIdArray :",productIdArray);
+	console.log("fetchedTestId :",testIdArray);
 
-  	var published = {"published":true};
-  	var testWithPurchedAndFetched = { $or:[{"testId":{$in:testIdArray}}, {"productId":{$in:productIdArray}}] };
-	Test.find({$and:[published, testWithPurchedAndFetched]}, null, {skip:perPage*page, limit:perPage}, function(filterErr, results){
-		Test.find({$and:[published, testWithPurchedAndFetched]}).count().exec(function(countErr, count){
+  	var condition = {"published":true};
+  	var option;
+
+	if (category === "myLibrary") {
+		var published = {"published":true};
+	  	var testWithPurchedAndFetched = { $or:[{"testId":{$in:testIdArray}}, {"productId":{$in:productIdArray}}] };
+		condition = {$and:[published, testWithPurchedAndFetched]};
+		option = {skip:perPage*page, limit:perPage}
+	} else if (category === "popular") {
+		option = {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}};
+	}
+
+	Test.find(condition, null, option, function(filterErr, results){
+		Test.find(condition).count().exec(function(countErr, count){
 			if (filterErr || countErr) {
 				res.send(filterErr || countErr);
 			}
 			else {
-				for (var i in results) {
-					var test = results[i];
-					var productId = test["productId"];
-					var testId = test["testId"];
-
-					if (productIdArray.indexOf(productId) > -1) {
-						test['status'] = "purchased";
-					}
-					if (testIdArray.indexOf(testId) > -1) {
-						test['status'] = "downloaded";
-					}
-				}
-
 				var pageCount = Math.ceil(count/perPage);
-				res.render('index.html', 
-					{
-					category: "myLibrary",
+				res.send({
+					category: category,
 					testList: results,
-					pageIndex: page,
+					pageIndex: (pageCount > page) ? page : (pageCount - 1),
 					pageCount: pageCount ? pageCount : 1,
 			 		prePage: (page > 0 && perPage*page < count),
-			 		nextPage: (perPage*page + perPage < count)});
+			 		nextPage: (perPage*page + perPage < count)
+				})
 			}
-		});
-	});
-});
-
-app.get('/popular', function(req, res){
-		var perPage = 12
-  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
-
-	var perPage = 12
-  	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
-
-	Test.find({"published":true}, null, {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}}, function(filterErr, results){
-		Test.find({"published":true}).count().exec(function(countErr, count){
-			if (filterErr || countErr) {
-				res.send(filterErr || countErr);
-			}
-			else {
-				var query = url.parse(req.url, true).query;
-				var productIdArray = query['purchasedTestId']? query['purchasedTestId'].split(','):[];
-				var testIdArray = query['purchasedTestId']? query['fetchedTestId'].split(','):[];
-
-				for (var i in results) {
-					var test = results[i];
-					var productId = test["productId"];
-					var testId = test["testId"];
-
-					if (productIdArray.indexOf(productId) > -1) {
-						test['status'] = "purchased";
-					}
-					if (testIdArray.indexOf(testId) > -1) {
-						test['status'] = "downloaded";
-					}
-				};
-
-				var pageCount = Math.ceil(count/perPage);
-				res.render('index.html', 
-					{
-					category: "popular",
-					testList: results,
-					pageIndex: page,
-					pageCount: pageCount ? pageCount : 1,
-			 		prePage: (page > 0 && perPage*page < count),
-			 		nextPage: (perPage*page + perPage < count)});
-			}			
 		});
 	});
 })
