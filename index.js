@@ -3,6 +3,7 @@ var url = require('url');
 var app = express();
 var data = require('./models/data.js');
 var Test = data.Test;
+var Question = data.AnsweredQuestion;
 
 app.use(express.static('public'));
 app.use(express.bodyParser());
@@ -190,4 +191,24 @@ app.post('/downloadTest', function(req, res){
 	   + '&coverImageUrl=' + encodeURIComponent(test.coverImageUrl);
 	res.redirect(url);
 })
+
+app.post('/postUserData', function(req, res) {
+	var deviceId = req.body.deviceId;
+	var userDataArray = req.body.userData;
+	for (var i = 0; i < userDataArray.length; i++) {
+		var data = userDataArray[i];
+		var question = new Question();
+		for (var key in data) {
+			question[key] = data[key];
+		};
+		question["deviceId"] = deviceId;
+		console.log(question);
+		question.save(function(err) {
+			res.end(JSON.stringify({err:err}));
+		});
+	};
+
+	res.end();
+})
+
 app.listen(process.env.PORT || 3000);

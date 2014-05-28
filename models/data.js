@@ -13,6 +13,18 @@ var Test = mongoose.Schema({
     downloadCount: Number
 });
 
+var AnsweredQuestion = mongoose.Schema({
+    zId: Number,
+    partId: Number,
+    testId: String,
+    questionId: Number,
+    topicId: Number,
+    answer: String,
+    isRight: Boolean,
+    date: String,
+    deviceId: String
+});
+
 Test.pre('save', function(next){
 	if (this.isNew) {
 		this.created_at = new Date();
@@ -20,5 +32,12 @@ Test.pre('save', function(next){
     next();
 });
 
+AnsweredQuestion.pre('save', function(next) {
+    next();
+});
+
 mongoose.model('Test', Test);
+mongoose.model('AnsweredQuestion', AnsweredQuestion);
+
 module.exports.Test = db.model('Test');
+module.exports.AnsweredQuestion = db.model('AnsweredQuestion');
