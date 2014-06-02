@@ -9,6 +9,7 @@
         var localTestIds = {};
         var page = 0;
         var category = "";
+        var selectionCells = {};
 
         function clientPurchasedProductId(productId) {
             localTestIds["purchasedTestId"].push(productId);
@@ -17,11 +18,17 @@
             for (var i in testList) {
                 var test = testList[i];
                 if (test.productId === productId) {
-                    console.log("refresh ", i);
                     test.status = "purchased"
-                    $("#selectionGrid div.cell button")[i].remove();
-                    var button = createButtonWith(test);
-                    $("#selectionGrid div.cell:eq(" + i + ")").append(button);
+                    var testId = test.testId;
+                    console.log("puchased testId", testId);
+
+                    var cell = selectionCells[testId];
+                    var element = cell.find("button");
+                    console.log(element);
+
+                    var newButton = createButtonWith(test);
+                    element.remove();
+                    cell.append(newButton);
                 }
             }
         }
@@ -33,11 +40,16 @@
             for (var i in testList) {
                 var test = testList[i];
                 if(test.testId === testId) {
-                    console.log("refresh ", i);
+                    console.log("download testId", testId);
+
                     test.status = "downloaded"
-                    $("#selectionGrid div.cell button")[i].remove();
-                    var button = createButtonWith(test);
-                    $("#selectionGrid div.cell:eq(" + i + ")").append(button);
+                    var cell= selectionCells[testId];
+                    var element = cell.find("button");
+                    console.log(element);
+
+                    var newButton = createButtonWith(test);
+                    element.remove();
+                    cell.append(newButton);
                 }
             }
         }
@@ -89,6 +101,9 @@
                 testList = data.testList;
                 var baseDiv = $("#selectionGrid div");
                 baseDiv.empty();
+                delete selectionCells;
+                selectionCells = {};
+
                 if (categoryName === "myLibrary" && (!testList.length)) {
                     var frame = $("<div>").css({"text-align":"center", "height":"340px"});
                     var base = $("<div>").css({"width":"100%", "height":"auto", "text-align":"center"});
@@ -117,24 +132,21 @@
                             test.status = "downloaded";
                             console.log(test + " set downloaded");
                         }
-                    };
 
-                    for (var i in testList) {
-                        var test = testList[i];
                         var left = leftMargin + (i % 4) * 140 + (i % 4)*10;
                         var top = Math.floor(i/4)*270 + Math.floor(i/4 + 1)*10;
                         var cell = $("<div>").addClass("cell");
                         cell.css({"float":"left", "text-align": "center", "position":"absolute", "left":left + "px", "top": top + "px"});
 
                         var imageCover = $("<img>").addClass("cellCover").attr({src:test.coverImageUrl});
-                        
                         var title = $("<div>").addClass("title").attr({rows:"2"}).text(test.title);
-
                         var downloadBtn = createButtonWith(test);
 
                         cell.append(imageCover).append(title).append(downloadBtn);
                         baseDiv.css({"position":"absolute"});
                         baseDiv.append(cell);
+
+                        selectionCells[testId] = cell;
                     }
 
                     var pageIndex = data.pageIndex;
