@@ -100,7 +100,10 @@
                 console.log("jaquery :", data);
                 testList = data.testList;
                 var baseDiv = $("#selectionGrid div");
-                baseDiv.empty();
+                baseDiv.remove();
+
+                baseDiv = $("<div style='position:absolute'></div>")
+                $("#selectionGrid").append(baseDiv);
                 delete selectionCells;
                 selectionCells = {};
 
