@@ -37,6 +37,10 @@ Test.pre('save', function(next){
 	if (this.isNew) {
 		this.created_at = new Date();
 	};
+    this.price = this.price || 0;
+    this.downloadCount = this.downloadCount || 0;
+
+    console.log("save ",this);
     next();
 });
 
@@ -45,6 +49,9 @@ AnsweredQuestion.pre('save', function(next) {
 });
 
 News.pre('save', function(next) {
+    if (this.isNew) {
+        this.created_at = new Date();
+    };
     next();
 })
 

@@ -6,6 +6,7 @@ var Test = data.Test;
 var Question = data.AnsweredQuestion;
 
 var testManage = require('./testManage.js');
+var newsManage = require('./newsManage.js');
 
 app.use(express.static('public'));
 app.use(express.bodyParser());

@@ -33,28 +33,20 @@ exports.add = function(req, res){
 };
 
 exports.post = function(req, res){
-	console.log(req.body);
-	var testId = req.body.testId;
-	var title = req.body.title;
-	var coverImageUrl = req.body.coverImageUrl;
-	var zipUrl = req.body.zipUrl;
-	var price = req.body.price;
-	var published = req.body.published || false;
-	var productId = req.body.productId;
+	var testId = req.body.testId
+	if (!req.body.hasOwnProperty('published')) {
+		req.body.published = false;
+	};
 
-	console.log("post new test id", testId);
 	if (testId.length) {
 		Test.findOne({testId: testId}, function(err, test){
 			if (!test) {
 				var test = new Test();
-				test.testId = testId;
-				test.title = title;
-				test.coverImageUrl = coverImageUrl;
-				test.zipUrl = zipUrl;
-				test.price = price;
-				test.published = published;
-				test.productId = productId;
-				test.downloadCount = 0;
+				for (var key in req.body) {
+					test[key] = req.body[key];
+				};
+				console.log("post new ", test);
+
 				test.save(function(err) {
 					if (err) {
 						console.log("save new test err:", err);
@@ -75,25 +67,21 @@ exports.post = function(req, res){
 };
 
 exports.update = function(req, res){
-	var testId = req.body.testId;
+	var testId = req.body.testId
 	var lastTestId = req.body.lastTestId;
-	var title = req.body.title;
-	var coverImageUrl = req.body.coverImageUrl;
-	var zipUrl = req.body.zipUrl;
-	var price = req.body.price;
-	var published = req.body.published || false;
-	var productId = req.body.productId;
+	if (!req.body.hasOwnProperty('published')) {
+		req.body.published = false;
+	};
+
+	delete req.body.lastTestId
 
 	if (testId.length) {
 		Test.findOne({testId: lastTestId}, function(err, test){
-	
-			test.testId = testId;
-			test.title = title;
-			test.coverImageUrl = coverImageUrl;
-			test.zipUrl = zipUrl;
-			test.price = price;
-			test.published = published;
-			test.productId = productId;
+			for (var key in req.body) {
+				test[key] = req.body[key];
+			};
+			console.log("update ", test);
+
 			test.save(function(err) {
 				res.end(JSON.stringify({err:err, url:"/testList"}));
 			});
