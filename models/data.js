@@ -25,6 +25,14 @@ var AnsweredQuestion = mongoose.Schema({
     deviceId: String
 });
 
+var News = mongoose.Schema({
+    title: String,
+    content: String,
+    created_at: String,
+    author: String,
+    published: Boolean
+})
+
 Test.pre('save', function(next){
 	if (this.isNew) {
 		this.created_at = new Date();
@@ -36,8 +44,14 @@ AnsweredQuestion.pre('save', function(next) {
     next();
 });
 
+News.pre('save', function(next) {
+    next();
+})
+
 mongoose.model('Test', Test);
 mongoose.model('AnsweredQuestion', AnsweredQuestion);
+mongoose.model('News', News);
 
 module.exports.Test = db.model('Test');
 module.exports.AnsweredQuestion = db.model('AnsweredQuestion');
+module.exports.News = db.model('News');
