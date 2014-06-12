@@ -5,34 +5,82 @@
 	</head>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script type="text/javascript">
-		function post_to_url(path, params, method) {
-			console.log("params" + params);
-		    method = method || "post"; // Set method to post by default if not specified.
+		function reloadList(pageIndex) {
+			$.get('/testList', {page: pageIndex}, function(result){
+				var list = result.testList;
+				var columnNames = result.columnName;
+				var pageCount = result.pageCount;
+				var hasPrepage = result.prePage;
+				var hasNextpage = result.nextPage;
+				var selectColumn = result.selectColumn;
 
-		    // The rest of this code assumes you are not using a library.
-		    // It can be made less wordy if you use one.
-		    var form = document.createElement("form");
-		    form.setAttribute("method", method);
-		    form.setAttribute("action", path);
+				$("#table tr").remove();
+				var columnRow = $("<tr>");
 
-		    for(var key in params) {
-		        if(params.hasOwnProperty(key)) {
-		            var hiddenField = document.createElement("input");
-		            hiddenField.setAttribute("type", "hidden");
-		            hiddenField.setAttribute("name", key);
-		            hiddenField.setAttribute("value", params[key]);
+				var columnWidth = 800.0 / columnNames.length;
+				for (var i in columnNames) {
+					var name = columnNames[i];
+					var cell = $("<th>").addClass("capitalize").attr({align:"center"}).css({"width": columnWidth + "px"}).text(name);
+					columnRow.append(cell);
+				}
+				$("#table").append(columnRow);
 
-		            form.appendChild(hiddenField);
-		         }
-		    }
+				for (var i in list) {
+					var item = list[i];
+					var row = $("<tr>");
+					if (i%2) {
+						row.css({"background-color": "white"});
+					}
+					else {
+						row.css({"background-color": "#D7D7D7"});
+					}
 
-		    document.body.appendChild(form);
-		    form.submit();
+					for(var j in columnNames) {
+						var name = columnNames[j];
+						var value = item[name];
+						var cell = $("<th>").addClass("cell").attr({align:"center"});
+						if(name === selectColumn) {
+							cell.append($("<a>").attr({href:"/addTest?_id=" + item["_id"]}).text(value));
+						}
+						else {
+							cell.text(value);
+						}
+						row.append(cell);
+					}
+
+					var deleteBtn = $("<button>").css({"background":"#FF3807", "border-width":"1px", "font-size":"12px", "border-color":"black"}).text("delete");
+					bindDeleteButton(deleteBtn, item);
+					var cell = $("<th>");
+					cell.append(deleteBtn);
+					row.append(cell);
+					$("#table").append(row);
+				}
+
+                var preBtn = $("#pageControl button")[0]; 
+                var nextBtn = $("#pageControl button")[1];
+                preBtn.disabled = hasPrepage ? false : true;
+                nextBtn.disabled = hasNextpage ? false : true;
+                preBtn.onclick = function() {
+                	reloadList(pageIndex - 1);
+                };
+                nextBtn.onclick = function() {
+                	reloadList(pageIndex + 1);
+                };
+                $("#pageControl a").text((pageIndex + 1) + "/" + pageCount);
+			});
 		}
 
-		function goToPage(pageIndex) {
-			window.location = "testList?page=" + pageIndex; 
+		function bindDeleteButton(btn, item) {
+			btn.click(function(){
+			    $.post('/deletePost', {_id: item["_id"]}, function(result){
+			    	reloadList(0);
+			    });
+			});
 		}
+
+		$(document).ready(function() {
+			reloadList(0);
+		});
 	</script>
 	<style type="text/css">
 		a {
@@ -55,61 +103,12 @@
 		<div id='container' style="width:100%;">
 			<button style="background:#72AB12; border-width:1px; font-size:12px; border-color:black;" onclick="location.href='/addTest'">New test</button>
 			<hr/>
-			<table width="100%" cellspacing="0" cellpadding="5">
-			  <tr>
-			  <% for(var i = 0; i < columnName.length; i++) { %>
-				  <th class="capitalize" align="center" style="width:<%= 80.0/columnName.length%>%">
-				  	<%=columnName[i]%>
-				  </th>
-			  <% } %>
-			  </tr>
-
-			  <% for(var i = 0; i < testList.length; i++) { 
-			  		var test = testList[i];
-			  	%>
-			  	<% if(i%2) {%>
-			  		<tr style="background-color: white">
-			  	<% } else {%>
-			  		<tr style="background-color: #D7D7D7">
-			  	<% } %>
-				  <% for(var j = 0; j < columnName.length; j++) {
-				  		var name = columnName[j];
-				  		var value = test[name];
-				  		%>
-
-				  		<th align="center" class="cell">
-				  		<% if(name === "testId"){ %>
-				  			  <a href="/addTest?testId=<%=value%>"><%=value%></a>
-				  		<% }
-				  		   else {
-				  		   	  %><%=value%><%
-				  		   } %>
-				        </th>
-				  <% } %>
-				  	<th>
-				  	  <button style="background:#FF3807; border-width:1px; font-size:12px; border-color:black;" onclick="post_to_url('/deletePost', {testId: '<%=test['testId']%>'}, 'post')">delete</button>	
-				  	</th>
-				</tr>
-			  <% } %>
+			<table id='table' width="100%" cellspacing="0" cellpadding="5">
 			</table>
-			<div style="width:100%; text-align:center; margin-top:20px">
-	            <% if(prePage) { %>
-		            <% var page = pageIndex - 1 %>
-		            <button class="page" onclick="goToPage(<%=page%>)">
-	            <% } else { %>
-		            <button class="page" disabled>
-	            <% } %>
-	            <<<</button>
-
-	            <a><%=pageIndex + 1%>/<%=pageCount%></a>
-
-	            <% if(nextPage) { %>
-		            <% var page = pageIndex + 1 %>
-		            <button class="page" onclick="goToPage(<%=page%>)">
-	            <% } else { %>
-		            <button class="page" disabled>
-	            <% } %>
-	            >>></button>
+			<div id="pageControl" style="width:100%; text-align:center; margin-top:20px">
+                <button class="page"><<<</button>
+                <a></a>
+                <button class="page">>>></button>
 			</div>
 		</div>		
 	</body>

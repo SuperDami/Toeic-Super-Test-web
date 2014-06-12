@@ -6,17 +6,17 @@ var Test = data.Test;
 var Question = data.AnsweredQuestion;
 
 var testManage = require('./testManage.js');
-var newsManage = require('./newsManage.js');
+var news = require('./news.js');
 
 app.use(express.static('public'));
 app.use(express.bodyParser());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
-app.get('/testList', testManage.testList);
+app.get('/showList', testManage.showList);
+app.get('/testList', testManage.list);
 app.get('/addTest', testManage.add);
-app.post('/postNewTest', testManage.post);
-app.post('/updateTest', testManage.update);
+app.post('/postForm', testManage.post);
 app.post('/deletePost', testManage.deletePost);
 
 app.get('/', function(req, res) {

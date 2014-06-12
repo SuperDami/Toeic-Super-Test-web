@@ -7,8 +7,7 @@
 		    label { margin-left: auto;}
 		    div.inputText {width:700px; margin-top: 20px;}
 	    </style>
-	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	    <script src='/js/editTest.js'></script>
+	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	    <script type="text/javascript">
 	        function postNewTest() {
 				$.post("/postNewTest", $("#postTestForm").serialize(), function(data){
@@ -32,77 +31,69 @@
 					}
 				}, "json");	        	
 	        }
+
+	        function postParams(params) {
+				$("#postTestForm input").each(function() {
+					var name = $(this).attr('id');
+					var type = $(this).attr('type');
+					if (type === 'checkbox') {
+						params[name] = $(this).prop('checked')
+					}
+					else {
+						params[name] = $(this).val();
+					}
+				});
+				
+	        	$.post("/postForm", params, function(data){
+	        		if (data.url) {
+						window.location = data.url;
+	        		}
+	        		if (data.err) {
+	        			alert(data.err);
+	        		};
+	        	}, "json");
+	        }
+
+	        $(document).ready(function() {
+	        	var params = <%-JSON.stringify(test)%>;
+	        	var editColumns = <%-JSON.stringify(editColumns)%>;
+	        	if (!params) {
+	        		params = {};
+	        	}
+
+	        	var form = $("<form>").attr({id:"postTestForm", method:"post", action:"/postNewTest"});
+	        	for (var i in editColumns) {
+	        		var columnName = editColumns[i];
+	        		var label = $("<label>").text(columnName);
+	        		var input = $("<input>").attr({id:columnName, name:columnName});
+	        		if (columnName === "published") {
+	        			input.attr({type:"checkbox"});
+	        			if (params.hasOwnProperty(columnName)) {
+	        				input.prop('checked', params[columnName]);
+	        			}
+	        		}
+	        		else {
+	        			input.attr({type:"text"});
+		        		if (params.hasOwnProperty(columnName)) {
+		        			input.val(params[columnName]);
+		        		}
+	        		}
+
+	        		var div = $("<div>").addClass("inputText");
+	        		div.append(label).append(input);
+	        		form.append(div);
+	        	};
+
+	        	var postBtn = $("<button>").attr({type:"submit"})
+	        	postBtn.text("post");
+	        	postBtn.click(function() {
+	        		postParams(params);
+	        	});
+
+	        	$(document.body).append($("<div>").append(form).append(postBtn));
+			});
 	    </script>
     </head>
     <body>
-    	<div>
-	    	<form method="post" id="postTestForm" action="/postNewTest">
-	    		<div class='inputText'>
-	    			<label>testId</label>
-	    			<%if(test) {%>
-	    				   <input type="text" name="testId" id="testId" value=<%=test["testId"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="testId" id="testId">
-	    			<% } %>
-		    		<% if(test) { %>
-		    			<input type="text" name="lastTestId" id="lastTestId" value=<%=test["testId"]%> hidden="true">
-		    		<% } %>	    		
-	    		</div>
-
-	    		<div class='inputText'>
-	    			<label>title</label>
-	    			<%if(test) {%>
-						   <input type="text" name="title" id="title" value=<%=test["title"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="title" id="title">
-	    			<% } %>
-	    		</div>
-	    		<div class='inputText'>
-	    			<label>cover image url</label>
-	    			<%if(test) {%>
-	    				   <input type="text" name="coverImageUrl" id="coverImageUrl" value=<%=test["coverImageUrl"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="coverImageUrl" id="coverImageUrl">
-	    			<% } %>
-	    		</div>
-	    		<div class='inputText'>
-	    			<label>zip package url</label>
-	    			<%if(test) {%>
-	    				   <input type="text" name="zipUrl" id="zipUrl" value=<%=test["zipUrl"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="zipUrl" id="zipUrl">
-	    			<% } %>
-	    		</div>
-	    		<div class='inputText'>
-					<label>price</label>	
-	    			<%if(test) {%>
-	    				   <input type="text" name="price" id="price" value=<%=test["price"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="price" id="price">
-	    			<% } %>	    		
-	    		</div>
-	    		<div class='inputText'>
-					<label>productId</label>	
-	    			<%if(test) {%>
-	    				   <input type="text" name="productId" id="productId" value=<%=test["productId"]%>>
-	    			<% } else { %>
-	    				   <input type="text" name="productId" id="productId">
-	    			<% } %>
-	    		</div>	    		
-	    		<div class="inputText">
-					<label>published</label>	
-	    			<%if(test) {%>
-	    			<%	if (test["published"]) { %>
-	    				   <input type="checkbox" name="published" id="published" checked>
-	    			<%	} else {%>
-	    				   <input type="checkbox" name="published" id="published">
-	    			<% 	} %> 
-	    			<%} else {%>
-	    				<input type="checkbox" name="published" id="published">
-	    			<%}%>	    			
-	    		</div>
-	    	</form>    		
-	    	<button type="submit" <% if(test){ %>onclick="updateTest()"<% } else { %>onclick="postNewTest()"<% } %>>Post</button>
-    	</div>
     </body>
 </html>

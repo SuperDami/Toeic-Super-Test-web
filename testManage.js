@@ -1,103 +1,59 @@
 var data = require('./models/data.js');
+var dm = require('./models/dataManager.js');
 var Test = data.Test;
 
-exports.testList = function(req, res){
-	var perPage = 20
-	  , page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+dm.setDBModule(Test);
 
-	Test.find(null, null, {skip:perPage*page, limit:perPage}, function(filterErr, tests){
-		Test.count().exec(function(countErr, count){
-			if (filterErr || countErr) {
-				res.end(JSON.stringify({err:filterErr || countErr, url:"/testList"}));
-			}
-			
-			var pageCount = Math.ceil(count/perPage);
+exports.showList = function(req, res){
+	res.render('testList.html');
+}
 
-			res.render('testList.html', {testList: tests,
-			 columnName:["title", "testId", "price", "created_at", "productId", "published", "downloadCount"],
-			 pageIndex: page,
-			 pageCount: pageCount ? pageCount : 1,
-			 prePage: (page > 0 && perPage*page < count),
-			 nextPage: (perPage*page + perPage < count)});
-		});
+exports.list = function(req, res) {
+	var page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+	dm.list(page, function(result, err){
+		if (!err) {
+			result["columnName"] = ["title", "testId", "price", "created_at", "productId", "published", "downloadCount"];
+			result["selectColumn"] = "title";
+			res.send(result);
+		}
 	});
-};
+}
 
 exports.add = function(req, res){
-	var testId = req.param('testId');
-	console.log(testId);
-	Test.findOne({testId: testId} ,function(err, test){
-		console.log("edit : ", test);
-		res.render('addTest.html', {test: test});
-	})
-};
-
-exports.post = function(req, res){
-	var testId = req.body.testId
-	if (!req.body.hasOwnProperty('published')) {
-		req.body.published = false;
-	};
-
-	if (testId.length) {
-		Test.findOne({testId: testId}, function(err, test){
-			if (!test) {
-				var test = new Test();
-				for (var key in req.body) {
-					test[key] = req.body[key];
-				};
-				console.log("post new ", test);
-
-				test.save(function(err) {
-					if (err) {
-						console.log("save new test err:", err);
-					}
-					res.end(JSON.stringify({err:err, url:"/testList"}));
-				});
-			}
-			else {
-				console.log("testId existed");
-				res.end(JSON.stringify({testId:"testId existed"}));
-			}
-		})
-	}
-	else {
-		console.log("testId can not be nil");
-		res.end(JSON.stringify({testId:"testId can not be nil"}));
-	}
-};
-
-exports.update = function(req, res){
-	var testId = req.body.testId
-	var lastTestId = req.body.lastTestId;
-	if (!req.body.hasOwnProperty('published')) {
-		req.body.published = false;
-	};
-
-	delete req.body.lastTestId
-
-	if (testId.length) {
-		Test.findOne({testId: lastTestId}, function(err, test){
-			for (var key in req.body) {
-				test[key] = req.body[key];
-			};
-			console.log("update ", test);
-
-			test.save(function(err) {
-				res.end(JSON.stringify({err:err, url:"/testList"}));
-			});
-		})
-	}
-	else {
-		res.end(JSON.stringify({testId:"testId can not be nil"}));
-	}
+	var _id = req.param('_id');
+	Test.findOne({_id: _id} ,function(err, test){
+		console.log("edit ", test);
+		if (err) {
+			console.log("edit err ",err);
+			res.redirect('/showList');
+		}
+		else {
+			res.render('addTest.html', {test: test, editColumns:["testId", "title", "price", "coverImageUrl", "zipUrl", "productId", "published"]});
+		}
+	});
 };
 
 exports.deletePost = function(req, res){
-	var testId = req.body.testId;
-	Test.findOne({testId: testId}).remove(function(err){
-		if (!err) {
-			console.log("delete testId : " + testId);
-			res.redirect('/testList');
+	var _id = req.body._id;
+	Test.findOne({_id: _id}).remove(function(err){
+		console.log("delete " + _id);
+		if (err) {
+			console.log("delete err ",err);
 		}
+		res.end();
 	});
+};
+
+exports.post = function(req, res){
+	var test = req.body;
+	if (test.hasOwnProperty("_id")) {
+		dm.post(test, {_id: test._id}, function(err) {
+			res.end(JSON.stringify({err:err, url:"/showList"}));
+		});
+	}
+	else {
+		dm.post(test, {_id: ""}, function(err) {
+			res.end(JSON.stringify({err:err, url:"/showList"}));
+		});
+	}
 };
