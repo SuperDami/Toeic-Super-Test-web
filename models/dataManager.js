@@ -1,10 +1,4 @@
-var module;
-
-exports.setDBModule = function(_module) {
-	module = _module;
-};
-
-exports.list = function(page, callback) {
+exports.list = function(module, page, callback) {
 	var perPage = 20;
 	module.find(null, null, {skip:perPage*page, limit:perPage}, function(filterErr, list){
 		module.count().exec(function(countErr, count){
@@ -25,7 +19,7 @@ exports.list = function(page, callback) {
 	});
 }
 
-exports.post = function(elements, conditions, callback) {
+exports.post = function(module, elements, conditions, callback) {
 	module.findOne(conditions, function(err, result){
 		if (!result) {
 			result = new module();

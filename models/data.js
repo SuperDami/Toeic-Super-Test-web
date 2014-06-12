@@ -60,5 +60,5 @@ mongoose.model('AnsweredQuestion', AnsweredQuestion);
 mongoose.model('News', News);
 
 module.exports.Test = db.model('Test');
-module.exports.AnsweredQuestion = db.model('AnsweredQuestion');
 module.exports.News = db.model('News');
+module.exports.AnsweredQuestion = db.model('AnsweredQuestion');

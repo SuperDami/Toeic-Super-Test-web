@@ -9,30 +9,7 @@
 	    </style>
 	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	    <script type="text/javascript">
-	        function postNewTest() {
-				$.post("/postNewTest", $("#postTestForm").serialize(), function(data){
-					console.log($("#published").checked);
-					if (data.url) {
-						window.location = data.url;
-					}
-					else {
-
-					}
-				}, "json");
-	        }
-
-	        function updateTest() {
-				$.post("/updateTest", $("#postTestForm").serialize(), function(data){
-					if (data.url) {
-						window.location = data.url;
-					}
-					else {
-
-					}
-				}, "json");	        	
-	        }
-
-	        function postParams(params) {
+	        function postParams(params, postPath) {
 				$("#postTestForm input").each(function() {
 					var name = $(this).attr('id');
 					var type = $(this).attr('type');
@@ -44,7 +21,7 @@
 					}
 				});
 				
-	        	$.post("/postForm", params, function(data){
+	        	$.post(postPath, params, function(data){
 	        		if (data.url) {
 						window.location = data.url;
 	        		}
@@ -57,11 +34,13 @@
 	        $(document).ready(function() {
 	        	var params = <%-JSON.stringify(test)%>;
 	        	var editColumns = <%-JSON.stringify(editColumns)%>;
+	        	var basePath = <%-JSON.stringify(basePath)%>
+	        	var postPath = basePath + '/post';
 	        	if (!params) {
 	        		params = {};
 	        	}
 
-	        	var form = $("<form>").attr({id:"postTestForm", method:"post", action:"/postNewTest"});
+	        	var form = $("<form>").attr({id:"postTestForm", method:"post"});
 	        	for (var i in editColumns) {
 	        		var columnName = editColumns[i];
 	        		var label = $("<label>").text(columnName);
@@ -87,7 +66,7 @@
 	        	var postBtn = $("<button>").attr({type:"submit"})
 	        	postBtn.text("post");
 	        	postBtn.click(function() {
-	        		postParams(params);
+	        		postParams(params, postPath);
 	        	});
 
 	        	$(document.body).append($("<div>").append(form).append(postBtn));

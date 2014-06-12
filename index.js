@@ -5,19 +5,25 @@ var data = require('./models/data.js');
 var Test = data.Test;
 var Question = data.AnsweredQuestion;
 
-var testManage = require('./testManage.js');
-var news = require('./news.js');
+var testManage = require('./test.js');
+var newsManage = require('./news.js');
 
 app.use(express.static('public'));
 app.use(express.bodyParser());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
-app.get('/showList', testManage.showList);
-app.get('/testList', testManage.list);
-app.get('/addTest', testManage.add);
-app.post('/postForm', testManage.post);
-app.post('/deletePost', testManage.deletePost);
+app.get('/test/api/listData', testManage.listData);
+app.get('/test', testManage.testList);
+app.post('/test/post', testManage.postTest);
+app.post('/test/delete', testManage.deleteTest);
+app.get('/test/editPage', testManage.add);
+
+app.get('/news/api/listData', newsManage.listData);
+app.get('/news', newsManage.newsList);
+app.post('/news/post', newsManage.postNews);
+app.post('/news/delete', newsManage.deleteNews);
+app.get('/news/editPage', newsManage.add);
 
 app.get('/', function(req, res) {
 	res.render('index.html');
