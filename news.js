@@ -28,7 +28,7 @@ exports.add = function(req, res){
 			res.redirect(basePath);
 		}
 		else {
-			res.render('edit.html', {test: test, editColumns:["title", "content", "author", "published"], basePath: basePath});
+			res.render('edit.html', {test: test, editColumns:["title", "author", "content", "published"], basePath: basePath});
 		}
 	});
 };

@@ -20,6 +20,11 @@
 						params[name] = $(this).val();
 					}
 				});
+
+				$("#postTestForm textarea").each(function() {
+					var name = $(this).attr('id');
+					params[name] = $(this).val();
+				});
 				
 	        	$.post(postPath, params, function(data){
 	        		if (data.url) {
@@ -44,20 +49,28 @@
 	        	for (var i in editColumns) {
 	        		var columnName = editColumns[i];
 	        		var label = $("<label>").text(columnName);
-	        		var input = $("<input>").attr({id:columnName, name:columnName});
-	        		if (columnName === "published") {
-	        			input.attr({type:"checkbox"});
-	        			if (params.hasOwnProperty(columnName)) {
-	        				input.prop('checked', params[columnName]);
-	        			}
-	        		}
-	        		else {
-	        			input.attr({type:"text"});
+	        		var input;
+	        		if (columnName === "content") {
+	        			input = $("<textarea>").attr({id:columnName, name:columnName});
 		        		if (params.hasOwnProperty(columnName)) {
 		        			input.val(params[columnName]);
+		        		}	        			
+	        		}
+	        		else {
+	        			input = $("<input>").attr({id:columnName, name:columnName});
+		        		if (columnName === "published") {
+		        			input.attr({type:"checkbox"});
+		        			if (params.hasOwnProperty(columnName)) {
+		        				input.prop('checked', params[columnName]);
+		        			}
+		        		}
+		        		else {
+		        			input.attr({type:"text"});
+			        		if (params.hasOwnProperty(columnName)) {
+			        			input.val(params[columnName]);
+			        		}
 		        		}
 	        		}
-
 	        		var div = $("<div>").addClass("inputText");
 	        		div.append(label).append(input);
 	        		form.append(div);
