@@ -7,10 +7,13 @@
 		    label { margin-left: auto;}
 		    div.inputText {width:700px; margin-top: 20px;}
 	    </style>
+	    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	    <script type="text/javascript">
 	        function postParams(params, postPath) {
-				$("#postTestForm input").each(function() {
+				$("fieldset input").each(function() {
 					var name = $(this).attr('id');
 					var type = $(this).attr('type');
 					if (type === 'checkbox') {
@@ -21,7 +24,7 @@
 					}
 				});
 
-				$("#postTestForm textarea").each(function() {
+				$("fieldset textarea").each(function() {
 					var name = $(this).attr('id');
 					params[name] = $(this).val();
 				});
@@ -45,19 +48,24 @@
 	        		params = {};
 	        	}
 
-	        	var form = $("<form>").attr({id:"postTestForm", method:"post"});
+	        	// var form = $("<form>").attr({id:"postTestForm", method:"post"});
+	        	var fieldset = $("fieldset");
 	        	for (var i in editColumns) {
 	        		var columnName = editColumns[i];
-	        		var label = $("<label>").text(columnName);
+
+	        		var formGroup = $("<div>").addClass("form-group");
+	        		var label = $("<label>").addClass("col-md-3 control-label").text(columnName).attr({for:columnName});
+	        		var div = $("<div>").addClass("col-md-9");
 	        		var input;
+
 	        		if (columnName === "content") {
-	        			input = $("<textarea>").attr({id:columnName, name:columnName});
+	        			input = $("<textarea>").attr({id:columnName, name:columnName}).addClass("form-control").css({height:"200px"});
 		        		if (params.hasOwnProperty(columnName)) {
 		        			input.val(params[columnName]);
 		        		}	        			
 	        		}
 	        		else {
-	        			input = $("<input>").attr({id:columnName, name:columnName});
+	        			input = $("<input>").attr({id:columnName, name:columnName}).addClass("form-control");
 		        		if (columnName === "published") {
 		        			input.attr({type:"checkbox"});
 		        			if (params.hasOwnProperty(columnName)) {
@@ -71,21 +79,76 @@
 			        		}
 		        		}
 	        		}
-	        		var div = $("<div>").addClass("inputText");
-	        		div.append(label).append(input);
-	        		form.append(div);
+	        		div.append(input);
+	        		formGroup.append(label).append(div);
+
+	        		fieldset.append(formGroup);
 	        	};
 
-	        	var postBtn = $("<button>").attr({type:"submit"})
-	        	postBtn.text("post");
+		        var formGroup = $("<div>").addClass("form-group");
+		        var div = $("<div>").addClass("col-md-12 text-right");
+	        	var postBtn = $("<button>").attr({type:"button"}).addClass("btn btn-primary btn-lg").text("Submit");
 	        	postBtn.click(function() {
 	        		postParams(params, postPath);
 	        	});
 
-	        	$(document.body).append($("<div>").append(form).append(postBtn));
+	        	div.append(postBtn);
+	        	formGroup.append(div);
+	        	fieldset.append(formGroup);
 			});
 	    </script>
     </head>
     <body>
+		<div class="container">
+			<div class="row">
+		      <div class="col-md-6 col-md-offset-3">
+		        <div class="well well-sm">
+		          <form class="form-horizontal" action="" method="post">
+		          <fieldset>
+		            <legend class="text-center">Edit</legend>
+		    
+		            <!-- Name input-->
+<!-- 		            <div class="form-group">
+		              <label class="col-md-3 control-label" for="name">Name</label>
+		              <div class="col-md-9">
+		                <input id="name" name="name" type="text" placeholder="Your name" class="form-control">
+		              </div>
+		            </div>
+ -->		    
+		            <!-- Email input-->
+<!-- 		            <div class="form-group">
+		              <label class="col-md-3 control-label" for="email">Your E-mail</label>
+		              <div class="col-md-9">
+		                <input id="email" name="email" type="text" placeholder="Your email" class="form-control">
+		              </div>
+		            </div>
+ -->		    
+		            <!-- Message body -->
+<!-- 		            <div class="form-group">
+		              <label class="col-md-3 control-label" for="message">Your message</label>
+		              <div class="col-md-9">
+		                <textarea class="form-control" id="message" name="message" placeholder="Please enter your message here..." rows="5"></textarea>
+		              </div>
+		            </div>
+ -->
+<!-- 		            <div class="form-group">
+		              <label class="col-md-3 control-label" for="published">published</label>
+		              <div class="col-md-9">
+		                <input id="published" name="published" type="checkbox" class="form-control">
+		              </div>
+		            </div>
+ -->		    
+		            <!-- Form actions -->
+<!-- 		            <div class="form-group">
+		              <div class="col-md-12 text-right">
+		                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+		              </div>
+		            </div>
+ -->		          </fieldset>
+		          </form>
+		        </div>
+		      </div>
+			</div>
+		</div>
     </body>
 </html>
