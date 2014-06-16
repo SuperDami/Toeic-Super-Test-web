@@ -3,9 +3,13 @@
 	<head>
 		<title>Toeic-Super-Test Manager List</title>
 	</head>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		var basePath = <%-JSON.stringify(basePath)%>
+		var selectRecord;
 
 		function reloadList(pageIndex) {
 			$.get(basePath +'/api/listData', {page: pageIndex}, function(result){
@@ -16,68 +20,83 @@
 				var hasNextpage = result.nextPage;
 				var selectColumn = result.selectColumn;
 
-				$("#table tr").remove();
-				var columnRow = $("<tr>");
-
-				var columnWidth = 800.0 / columnNames.length;
+                $("thead tr").remove();
+                var row = $("<tr>");
+                $("thead").append(row);
 				for (var i in columnNames) {
 					var name = columnNames[i];
-					var cell = $("<th>").addClass("capitalize").attr({align:"center"}).css({"width": columnWidth + "px"}).text(name);
-					columnRow.append(cell);
-				}
-				$("#table").append(columnRow);
+					var cell = $("<th>").text(name);
+					row.append(cell);
+				}	
+				row.append($("<th>").text("Edit"));
+				row.append($("<th>").text("Delete"));
 
+				$("tbody tr").remove();
 				for (var i in list) {
 					var item = list[i];
 					var row = $("<tr>");
-					if (i%2) {
-						row.css({"background-color": "white"});
-					}
-					else {
-						row.css({"background-color": "#D7D7D7"});
-					}
-
 					for(var j in columnNames) {
 						var name = columnNames[j];
 						var value = item[name];
-						var cell = $("<th>").addClass("cell").attr({align:"center"});
-						if(name === selectColumn) {
-							cell.append($("<a>").attr({href:basePath + "/editPage?_id=" + item["_id"]}).text(value));
-						}
-						else {
-							cell.text(value);
-						}
+						var cell = $("<td>");
+						cell.text(value);
+
 						row.append(cell);
 					}
 
-					var deleteBtn = $("<button>").css({"background":"#FF3807", "border-width":"1px", "font-size":"12px", "border-color":"black"}).text("delete");
-					bindDeleteButton(deleteBtn, item);
-					var cell = $("<th>");
-					cell.append(deleteBtn);
-					row.append(cell);
-					$("#table").append(row);
-				}
+					var cell1 = $("<td>");
+					var editBtn = $("<a>").addClass("btn btn-primary btn-xs").attr('href', basePath + "/editPage?_id=" + item['_id']);
+					editBtn.append($("<span>").addClass("glyphicon glyphicon-pencil"));
+					editBtn.attr({"data-title":"Edit","data-toggle":"modal","data-placement":"top","rel":"tooltip"});
+					cell1.append($("<p>").append(editBtn));
 
-                var preBtn = $("#pageControl button")[0]; 
-                var nextBtn = $("#pageControl button")[1];
-                preBtn.disabled = hasPrepage ? false : true;
-                nextBtn.disabled = hasNextpage ? false : true;
-                preBtn.onclick = function() {
+					var cell2 = $("<td>");
+					var deleteBtn = $("<button>").addClass("btn btn-danger btn-xs");
+					deleteBtn.append($("<span>").addClass("glyphicon glyphicon-trash"));
+					deleteBtn.attr({"data-title":"Delete","data-toggle":"modal","data-target":"#delete","data-placement":"top","rel":"tooltip"});
+					bindOptionButton(deleteBtn, item);
+					cell2.append($("<p>").append(deleteBtn));
+
+					row.append(cell1).append(cell2);
+					$("tbody").append(row);
+				}
+				
+				var preBtn = $(".pagination li").eq(0);
+				var nextBtn = $(".pagination li").eq(2);
+
+				preBtn.find("a").click(hasPrepage ? function() {
                 	reloadList(pageIndex - 1);
-                };
-                nextBtn.onclick = function() {
+                } : null);
+                nextBtn.find("a").click(hasNextpage ? function() {
                 	reloadList(pageIndex + 1);
-                };
-                $("#pageControl a").text((pageIndex + 1) + "/" + pageCount);
+                } : null);
+
+				if (hasPrepage) {
+					preBtn.removeClass("disabled");
+				}
+				else {
+					preBtn.addClass("disabled");
+				}
+				if (hasNextpage) {
+					nextBtn.removeClass("disabled");
+				}
+				else {
+					nextBtn.addClass("disabled");
+				}
+				$(".pagination li a").eq(1).text((pageIndex + 1) + "/" + pageCount);
 			});
 		}
 
-		function bindDeleteButton(btn, item) {
+		function bindOptionButton(btn, item) {
 			btn.click(function(){
-			    $.post(basePath + '/delete', {_id: item["_id"]}, function(result){
-			    	reloadList(0);
-			    });
+				selectRecord = item;
 			});
+		}
+
+		function deletePost() {
+		    $.post(basePath + '/delete', {_id: selectRecord["_id"]}, function(result){
+		    	reloadList(0);
+		    });
 		}
 
 		$(document).ready(function() {
@@ -105,7 +124,7 @@
     	}
 	</style>
 	<body>
-		<div id='container' style="width:100%;">
+<!-- 		<div id='container' style="width:100%;">
 			<button id="addBtn" style="background:#72AB12; border-width:1px; font-size:12px; border-color:black;">Add</button>
 			<hr/>
 			<table id='table' width="100%" cellspacing="0" cellpadding="5">
@@ -116,5 +135,84 @@
                 <button class="page">>>></button>
 			</div>
 		</div>		
+ -->		
+<div class="container">
+	<div class="row">
+        <div class="col-md-12">
+        <h4>Bootstrap Snipp for Datatable</h4>
+        <div class="table-responsive">
+        	<button id="addBtn" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-plus"></span></button>
+        	<table id="mytable" class="table table-bordred table-striped">                   
+                <thead>
+               	</thead>
+			    <tbody>
+			    </tbody>
+        	</table>
+			<div class="clearfix"></div>
+				<ul class="pagination pull-right">
+				  <li class="disabled"><a href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+				  <li class="disabled"><a></a></li>
+				  <li><a href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+				</ul>                
+            </div>
+        </div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+      <div class="modal-dialog">
+    <div class="modal-content">
+          <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title custom_align" id="Heading">Edit Your Detail</h4>
+      </div>
+          <div class="modal-body">
+          <div class="form-group">
+        <input class="form-control " type="text" placeholder="Mohsin">
+        </div>
+        <div class="form-group">
+        
+        <input class="form-control " type="text" placeholder="Irshad">
+        </div>
+        <div class="form-group">
+        <textarea rows="2" class="form-control" placeholder="CB 106/107 Street # 11 Wah Cantt Islamabad Pakistan"></textarea>
+    
+        
+        </div>
+      </div>
+          <div class="modal-footer ">
+        <button type="button" class="btn btn-warning btn-lg" style="width: 100%;"><span class="glyphicon glyphicon-ok-sign"></span> Update</button>
+      </div>
+        </div>
+    <!-- /.modal-content --> 
+  </div>
+      <!-- /.modal-dialog --> 
+    </div>
+    
+    
+    
+    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+      <div class="modal-dialog">
+    <div class="modal-content">
+          <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title custom_align" id="Heading">Delete this entry</h4>
+      </div>
+          <div class="modal-body">
+       
+       <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to delete this Record?</div>
+       
+      </div>
+        <div class="modal-footer ">
+        <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="deletePost()"><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
+      </div>
+        </div>
+    <!-- /.modal-content --> 
+  </div>
+      <!-- /.modal-dialog --> 
+    </div>
+
 	</body>
 </html>
