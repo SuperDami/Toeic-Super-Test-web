@@ -3,7 +3,11 @@
     <head>
     <title>Toeic</title>
     <link rel='stylesheet' type='text/css' href='/style/stylesheet.css'/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <link rel='stylesheet' type='text/css' href='/style/newsContentStyle.css'/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript">
         var testList;
         var localTestIds = {};
@@ -83,6 +87,62 @@
             return downloadBtn;
         }
 
+        function refreshNewsContent() {
+            $($("#newsContent")).show();
+            $($("#selectGrid")).hide();
+            $($("#pageControl")).hide();
+
+
+            $.get("/news/lastContent", function(result){
+                if (!result instanceof Array) {
+                    return;
+                }
+
+                var baseDiv = $("#property-listings div");
+                baseDiv.find(".col-sm-6").empty(); 
+                var leftDiv = baseDiv.find(".col-sm-6").eq(0);
+                var rightDiv = baseDiv.find(".col-sm-6").eq(1);
+
+                for(var i in result) {
+                    var news = result[i];
+                    var _id = news._id;
+                    var title = news.title;
+                    var content = news.content;
+                    var date = new Date(news.created_at);
+                    var dateString = date.getFullYear() + "年" + (date.getMonth() + 1) + "月" + date.getDate() + "日" + 
+                    date.getHours() + "時" + date.getMinutes() + "分";
+                    var author = news.author;
+                    var image = news.imageUrl;
+
+
+                    var mediaBox = $("<div>").addClass("brdr bgc-fff pad-10 box-shad btm-mrg-20 property-listing");
+                    var media = $("<div>").addClass("media");
+                    mediaBox.append(media);
+
+                    if (image) {
+                        media.append($("<a>").addClass("pull-left"));
+                        media.append($("<img>").addClass("img-responsive").attr({alt:"image", src:""}));
+                    };
+
+                    media.append($("<div>").addClass("clearfix visible-sm"));
+                    var mediaBody = $("<div>").addClass("media-body fnt-smaller");
+                    media.append(mediaBody);
+                    mediaBody.append($("<a>").attr({href:"#", target:"_parent"}));
+
+                    var h4 = $("<h4>").addClass("media-heading");
+                    var a =$("<a>").attr({href:"#", target:"_parent"}).text(title)
+                    var small = $("<small>").addClass("pull-right").text(dateString);
+                    h4.append(a.append(small));
+                    mediaBody.append(h4);
+
+                    mediaBody.append($("<p>").addClass("text-left").text(content));
+                    mediaBody.append($("<span>").addClass("fnt-smaller fnt-lighter fnt-arial").text(author));
+
+                    leftDiv.append(mediaBox);
+                }
+            })
+        }
+
         function refreshCategoryContent(categoryName, page, params) {
             var testIdArray = [];
             var productIdArray = [];
@@ -96,14 +156,19 @@
                 productIdArray = params.purchasedTestId;
                 productIdSstring = params.purchasedTestId.join(',');
             }
-            $.get("/contentOnly", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdSstring}, function(data){
+
+            $($("#newsContent")).hide();
+            $($("#selectGrid")).show();
+            $($("#pageControl")).show();
+
+            $.get("/test/contentPage", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdSstring}, function(data){
                 console.log("jaquery :", data);
                 testList = data.testList;
-                var baseDiv = $("#selectionGrid div");
+                var baseDiv = $("#selectGrid div");
                 baseDiv.remove();
 
                 baseDiv = $("<div style='position:absolute'></div>")
-                $("#selectionGrid").append(baseDiv);
+                $("#selectGrid").append(baseDiv);
                 delete selectionCells;
                 selectionCells = {};
 
@@ -121,7 +186,7 @@
                 else {
                     var gridHeight = 290*Math.ceil(testList.length / 4);
                     var leftMargin = Math.floor((600 - 4 * 140 - 3 * 10) / 2.0);
-                    $("#selectionGrid").height(gridHeight);
+                    $("#selectGrid").height(gridHeight);
                     for (var i in testList) {
                         var test = testList[i];
                         var productId = test["productId"];
@@ -170,30 +235,29 @@
             });
         }
 
-    	function collectionSelect(categoryName) {
-            if (categoryName === "popular") {
-                $("#popularBtn").css({"color":"gray"});
-                $("#myLibraryBtn").css({"color":"black"});
-            } else {
-                $("#popularBtn").css({"color":"black"});
-                $("#myLibraryBtn").css({"color":"gray"});
+    	function collectionSelect(button) {
+            $(".categoryBtn").each(function(){
+                $(this).css({"color":"black"});
+            })
+            $(button).css({"color":"gray"});
+            var categoryName = $(button).attr("id");
+            if (categoryName === "news") {
+                refreshNewsContent();
             }
-            page = 0;
-            category = categoryName;
-            refreshCategoryContent(categoryName, 0, localTestIds);
-            // window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent(category);
+            else if (categoryName === "restore") {
+                window.location = "com.alc.topic.supertest.restore://";
+            }
+            else {
+                page = 0;
+                category = categoryName;
+                refreshCategoryContent(categoryName, 0, localTestIds);
+            }
     	}
 
         function goToPageIndex(pageIndex) {
             console.log("go to page", pageIndex);
             page = pageIndex;
             refreshCategoryContent(category, pageIndex, localTestIds);
-            // window.location = "com.alc.topic.supertest.goToPage://" + "page=" + encodeURIComponent(pageIndex) + "&category=" + encodeURIComponent(category); 
-        }
-
-        function restore() {
-            window.location = "com.alc.topic.supertest.restore://";
-            // window.location = "com.alc.topic.supertest.category://" + "category=" + encodeURIComponent("restore");
         }
 
         function purchaseTest(test) {
@@ -205,7 +269,7 @@
             var json = JSON.stringify(test);
 
             var form = document.createElement("form");
-            form.setAttribute("action", "/downloadTest");
+            form.setAttribute("action", "/test/download");
             form.setAttribute("method", "post");
             var hiddenField = document.createElement("input");
             hiddenField.setAttribute("type", "hidden");
@@ -218,27 +282,43 @@
     	}
 	</script>
 	</head>
-	<body style="margin: 0">
-		<div id='container' style="width:600px; height:100%; text-align:center;">
+	<body style="margin: 0; background-color:#EEEEEE">
+		<div id='container' style="width:100%; height:100%; text-align:center;">
 			<a id='header' style="width:100%; height:280px; text-align:center;" href="http://google.com" target="_self">
 				<img src='/images/header_ad.png' style="width:100%; margin:0 auto">
 			</a>
             <div style="width:100%; height:27px;">
-                <input type='button' id="popularBtn" class="categoryBtn" style="float:left" value='人気 コンテンシ' onclick="collectionSelect('popular')">
-                <input type='button' id="myLibraryBtn" class="categoryBtn" style="float:left; margin-left:16px" value='マイ•ライブラリ' onclick="collectionSelect('myLibrary')">
-                <input type='button' class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="restore()">
+                <input type='button' id="popular" class="categoryBtn" style="float:left" value='人気 コンテンシ' onclick="collectionSelect(this)">
+                <input type='button' id="myLibrary" class="categoryBtn" style="float:left; margin-left:16px" value='マイ•ライブラリ' onclick="collectionSelect(this)">
+                <input type='button' id="news" class="categoryBtn" style="float:left; margin-left:16px" value='ニュース' onclick="collectionSelect(this)">
+                <input type='button' id="restore" class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="collectionSelect(this)">
             </div>
             <hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade>
 
-            <div id="selectionGrid" style="width:100%; text-align:center;">
-                <div style="position:absolute">
-                </div>  
+            <div id="mainContainer" style="width:100%; text-align:center;">
+                <div id="selectGrid" hidden>
+                    <div style="position:absolute">
+                    </div>  
+                </div>
+                <div id="pageControl" style="width:100%; height:40px; text-align:center;" hidden>
+                    <button class="page"><<<</button>
+                    <a></a>
+                    <button class="page">>>></button>
+                </div>             
+                <div id="newsContent" hidden>
+                    <div class="container-fluid">
+                        <div class="container container-pad" id="property-listings">
+                            <div class="row">
+                                <div class="col-sm-6"> 
+                                </div>
+
+                                <div class="col-sm-6">  
+                                </div><!-- End Col -->
+                            </div><!-- End row -->
+                        </div><!-- End container -->
+                    </div>                
+                </div>
             </div> 
-            <div id="pageControl" style="width:100%; height:40px; text-align:center;">
-                <button class="page"><<<</button>
-                <a></a>
-                <button class="page">>>></button>
-            </div>             
 		</div>
 	</body>
 </html>

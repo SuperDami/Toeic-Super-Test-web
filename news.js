@@ -13,13 +13,12 @@ exports.listData = function(req, res) {
 	dm.list(dbModule, page, function(result, err){
 		if (!err) {
 			result["columnName"] = ["title", "created_at", "published"];
-			result["selectColumn"] = "title";
 			res.send(result);
 		}
 	});
 }
 
-exports.add = function(req, res){
+exports.edit = function(req, res){
 	var _id = req.param('_id');
 	dbModule.findOne({_id: _id} ,function(err, test){
 		console.log("edit ", test);
@@ -45,15 +44,21 @@ exports.deleteNews = function(req, res){
 };
 
 exports.postNews = function(req, res){
-	var test = req.body;
-	if (test.hasOwnProperty("_id")) {
-		dm.post(dbModule, test, {_id: test._id}, function(err) {
-			res.end(JSON.stringify({err:err, url:basePath}));
-		});
-	}
-	else {
-		dm.post(dbModule, test, {_id: ""}, function(err) {
-			res.end(JSON.stringify({err:err, url:basePath}));
-		});
-	}
+	var item = req.body;
+	dm.post(dbModule, item, function(err) {
+		res.end(JSON.stringify({err:err, url:basePath}));
+	});
 };
+
+exports.lastContent = function(req, res){
+	var condition = {published: true};
+	var option = {skip:0, limit:8, sort:{created_at: -1}};
+	dbModule.find(condition, null, option, function(filterErr, results){
+		if (filterErr) {
+			res.send(filterErr);
+		}
+		else {
+			res.send(results);
+		}
+	});
+}

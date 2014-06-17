@@ -19,7 +19,12 @@ exports.list = function(module, page, callback) {
 	});
 }
 
-exports.post = function(module, elements, conditions, callback) {
+exports.post = function(module, elements, callback) {
+	var conditions = {_id: ""};
+	if (elements.hasOwnProperty("_id")) {
+		var conditions = {_id: elements._id};
+	}
+
 	module.findOne(conditions, function(err, result){
 		if (!result) {
 			result = new module();
