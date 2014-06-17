@@ -12,7 +12,7 @@
         var testList;
         var localTestIds = {};
         var page = 0;
-        var category = "";
+        var category = "popular";
         var selectionCells = {};
 
         function clientPurchasedProductId(productId) {
@@ -56,6 +56,10 @@
                     cell.append(newButton);
                 }
             }
+        }
+
+        function updateLocalTestWith(testIds) {
+            localTestIds = testIds;
         }
 
         function clientLoadPageWith(testIds, categoryName) {
@@ -157,6 +161,11 @@
                 productIdSstring = params.purchasedTestId.join(',');
             }
 
+            if (categoryName === "news") {
+                refreshNewsContent();
+                return;
+            }
+
             $($("#newsContent")).hide();
             $($("#selectGrid")).show();
             $($("#pageControl")).show();
@@ -241,10 +250,7 @@
             })
             $(button).css({"color":"gray"});
             var categoryName = $(button).attr("id");
-            if (categoryName === "news") {
-                refreshNewsContent();
-            }
-            else if (categoryName === "restore") {
+            if (categoryName === "restore") {
                 window.location = "com.alc.topic.supertest.restore://";
             }
             else {
