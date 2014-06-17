@@ -95,7 +95,7 @@ exports.contentPage = function(req, res){
 
 exports.download = function(req, res){
 	var test = JSON.parse(req.body.test);
-	Test.findOne({testId: test.testId}, function(err, test){
+	dbModule.findOne({testId: test.testId}, function(err, test){
 		if (test.downloadCount) {
 			test.downloadCount = test.downloadCount + 1;
 		}
