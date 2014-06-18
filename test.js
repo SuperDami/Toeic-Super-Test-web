@@ -5,7 +5,7 @@ var dbModule = data.Test;
 var basePath = "/test";
 
 exports.testList = function(req, res){
-	res.render('testList.html', {basePath: basePath});
+	res.render('testList.ejs', {basePath: basePath});
 }
 
 exports.listData = function(req, res) {
@@ -27,7 +27,7 @@ exports.edit = function(req, res){
 			res.redirect(basePath);
 		}
 		else {
-			res.render('edit.html', {test: test, editColumns:["testId", "title", "price", "coverImageUrl", "zipUrl", "productId", "published"], basePath: basePath});
+			res.render('edit.ejs', {test: test, editColumns:["testId", "title", "price", "coverImageUrl", "zipUrl", "productId", "published"], basePath: basePath});
 		}
 	});
 };

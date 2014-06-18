@@ -33,6 +33,11 @@ var News = mongoose.Schema({
     published: Boolean
 })
 
+var UserSchema = new mongoose.Schema({
+    username: String,
+    password: String
+},{collection: 'info'});
+
 Test.pre('save', function(next){
 	if (this.isNew) {
 		this.created_at = new Date();
@@ -55,10 +60,7 @@ News.pre('save', function(next) {
     next();
 })
 
-mongoose.model('Test', Test);
-mongoose.model('AnsweredQuestion', AnsweredQuestion);
-mongoose.model('News', News);
-
-module.exports.Test = db.model('Test');
-module.exports.News = db.model('News');
-module.exports.AnsweredQuestion = db.model('AnsweredQuestion');
+module.exports.Test = db.model('Test', Test);
+module.exports.News = db.model('News', News);
+module.exports.AnsweredQuestion = db.model('AnsweredQuestion', AnsweredQuestion);
+module.exports.User = db.model('User', UserSchema);

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+  <title>ログイン前</title>
+
+  <script type="text/javascript">
+    function completeForSignin() {
+          var username = $("#signin").find("#userid").val();
+          var password = $("#signin").find("#password").val();
+          $.get("/signin", {username: username, password: password}, function(result){
+            var message = result.message;
+            var url = result.url;
+            if (message) {
+              alert(message);
+            }
+            if (url) {
+              window.location = url;
+            }
+          });
+    }
+
+    function completeForSignup() {
+          var username = $("#signup").find("#userid").val();
+          var password = $("#signup").find("#password").val();
+          var reenterpassword = $("#signup").find("#reenterpassword").val();
+          if(password === reenterpassword) {
+            $.post("/signup", {username: username, password: password}, function(result){
+              var message = result.message;
+              var url = result.url;
+              if (message) {
+                alert(message);
+              }          
+              if (url) {
+                window.location = url;
+              }    
+            });
+          }
+          else {
+            alert("your enter passwords are not same")
+          }
+    }
+
+  $(document).ready(function() {
+  });
+  </script>
+</head>
+<body>
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <br>
+        <div class="bs-example bs-example-tabs">
+            <ul id="myTab" class="nav nav-tabs">
+              <li class="active"><a href="#signin" data-toggle="tab">ログイン</a></li>
+              <li class=""><a href="#signup" data-toggle="tab">新規登録</a></li>
+            </ul>
+        </div>
+      <div class="modal-body">
+        <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="signin">
+            <form class="form-horizontal" action="javascript:completeForSignin()">
+            <fieldset>
+            <div class="control-group">
+              <label class="control-label" for="userid">Username:</label>
+              <div class="controls">
+                <input required="" id="userid" name="userid" type="text" class="form-control" placeholder="JoeSixpack" class="input-medium" required="">
+              </div>
+            </div>
+
+            <!-- Password input-->
+            <div class="control-group">
+              <label class="control-label" for="password">Password:</label>
+              <div class="controls">
+                <input required="" id="password" name="password" class="form-control" type="password" placeholder="********" class="input-medium">
+              </div>
+            </div>
+
+            <!-- Multiple Checkboxes (inline) -->
+            <div class="control-group">
+              <label class="control-label" for="rememberme"></label>
+              <div class="controls">
+                <label class="checkbox inline" for="rememberme-0">
+                  <input type="checkbox" name="rememberme" id="rememberme-0" value="Remember me">
+                  Remember me
+                </label>
+              </div>
+            </div>
+
+            <!-- Button -->
+            <div class="control-group">
+              <label class="control-label" for="confirmsignin"></label>
+              <div class="controls">
+                <button id="confirmsignin" name="confirmsignin" class="btn btn-success">Sign In</button>
+              </div>
+            </div>
+            </fieldset>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="signup">
+            <form class="form-horizontal" action="javascript:completeForSignup()">
+            <fieldset>
+            <!-- Sign Up Form -->
+            <!-- Text input-->
+            <div class="control-group">
+              <label class="control-label" for="userid">Username:</label>
+              <div class="controls">
+                <input id="userid" name="userid" class="form-control" type="text" placeholder="JoeSixpack" class="input-large" required="">
+              </div>
+            </div>
+            
+            <!-- Password input-->
+            <div class="control-group">
+              <label class="control-label" for="password">Password:</label>
+              <div class="controls">
+                <input id="password" name="password" class="form-control" type="password" placeholder="********" class="input-large" required="">
+                <em>1-8 Characters</em>
+              </div>
+            </div>
+            
+            <!-- Text input-->
+            <div class="control-group">
+              <label class="control-label" for="reenterpassword">Re-Enter Password:</label>
+              <div class="controls">
+                <input id="reenterpassword" class="form-control" name="reenterpassword" type="password" placeholder="********" class="input-large" required="">
+              </div>
+            </div>
+            <!-- Button -->
+            <div class="control-group">
+              <label class="control-label" for="confirmsignup"></label>
+              <div class="controls">
+                <button id="confirmsignup" name="confirmsignup" class="btn btn-success">Sign Up</button>
+              </div>
+            </div>
+            </fieldset>
+            </form>
+      </div>
+    </div>
+  </div>
+
+ </body>
+</html>
