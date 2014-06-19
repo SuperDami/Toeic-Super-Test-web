@@ -4,8 +4,6 @@ var app = express();
 var data = require('./models/data.js');
 var Test = data.Test;
 var Question = data.AnsweredQuestion;
-var MongoStore = require('connect-mongo')(express);
-
 
 var testManage = require('./test.js');
 var newsManage = require('./news.js');
@@ -19,12 +17,6 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.cookieParser()); //追加
 app.use(express.session({
     secret: 'secret',
-    store: new MongoStore({
-        db: 'session',
-        port: process.env.PORT || 3000,
-        host: process.env.CONNECT_MONGO || 'localhost',
-        clear_interval: 60 * 60
-    }),
     cookie: {
         httpOnly: false,
         maxAge: new Date(Date.now() + 60 * 60 * 1000)
