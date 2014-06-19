@@ -1,12 +1,6 @@
 var data = require('./models/data.js');
     User  = data.User;
 
-/*ログイン後ページ*/
-exports.index = function(req, res){
-    res.render('index.ejs', { user: req.session.user});
-    console.log(req.session.user);
-};
-
 /*ユーザー登録機能*/
 exports.signup = function(req, res){
     console.log("sign up ", req.body);
@@ -28,7 +22,7 @@ exports.signup = function(req, res){
                 }else{
                     message = "sign up successful"
                     req.session.user = username;
-                    url = "/";
+                    url = "/test";
                 }
                 console.log(message);
                 res.send({url:url, message:message});
@@ -54,7 +48,7 @@ exports.signin = function(req, res) {
             message = "sign in failed"
         }else{
             req.session.user = username;            
-            url = "/";
+            url = "/test";
             message = "sign in successful"
         }
 

@@ -38,12 +38,19 @@ var loginCheck = function(req, res, next) {
     }
 };
 
-app.get('/', loginCheck, routes.index);
+app.all('/test', loginCheck);
+app.all('/news', loginCheck);
+app.all('/user', loginCheck);
+app.all('/test/*', loginCheck);
+app.all('/news/*', loginCheck);
+app.all('/user/*', loginCheck);
+
+app.get('/', loginCheck, testManage.testList);
 app.get('/signin', routes.signin);
 app.post('/signup', routes.signup);
 
 app.get('/login', function(req, res){
-	res.render('login.ejs');
+  res.render('login.ejs');
 });
 app.get('/logout', function(req, res){
   req.session.destroy();
@@ -55,21 +62,21 @@ app.get('/test', testManage.testList);
 app.post('/test/post', testManage.post);
 app.post('/test/delete', testManage.delete);
 app.get('/test/editPage', testManage.edit);
-app.get('/test/contentPage', testManage.contentPage);
-app.post('/test/download', testManage.download);
 app.get('/test/api/listData', testManage.listData);
 
 app.get('/news', newsManage.newsList);
 app.post('/news/post', newsManage.post);
 app.post('/news/delete', newsManage.delete);
 app.get('/news/editPage', newsManage.edit);
-app.get('/news/lastContent', newsManage.lastContent);
 app.get('/news/api/listData', newsManage.listData);
 
 app.get('/user', userManage.userList);
 app.post('/user/delete', userManage.delete);
 app.get('/user/api/listData', userManage.listData);
 
+app.get('/lastNewsContent', newsManage.lastContent);
+app.get('/testContentPage', testManage.contentPage);
+app.post('/downloadTest', testManage.download);
 app.get('/main', function(req, res) {
 	res.render('main.ejs');
 });

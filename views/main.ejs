@@ -97,7 +97,7 @@
             $($("#pageControl")).hide();
 
 
-            $.get("/news/lastContent", function(result){
+            $.get("/lastNewsContent", function(result){
                 if (!result instanceof Array) {
                     return;
                 }
@@ -151,14 +151,14 @@
             var testIdArray = [];
             var productIdArray = [];
             var testIdsString = "";
-            var productIdSstring = "";
+            var productIdString = "";
             if (Array.isArray(params.fetchedTestId)) {
                 testIdArray = params.fetchedTestId;
                 testIdsString = params.fetchedTestId.join(',');
             }
             if (Array.isArray(params.purchasedTestId)) {
                 productIdArray = params.purchasedTestId;
-                productIdSstring = params.purchasedTestId.join(',');
+                productIdString = params.purchasedTestId.join(',');
             }
 
             if (categoryName === "news") {
@@ -170,7 +170,7 @@
             $($("#selectGrid")).show();
             $($("#pageControl")).show();
 
-            $.get("/test/contentPage", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdSstring}, function(data){
+            $.get("/testContentPage", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdString}, function(data){
                 console.log("jaquery :", data);
                 testList = data.testList;
                 var baseDiv = $("#selectGrid div");
@@ -275,7 +275,7 @@
             var json = JSON.stringify(test);
 
             var form = document.createElement("form");
-            form.setAttribute("action", "/test/download");
+            form.setAttribute("action", "/downloadTest");
             form.setAttribute("method", "post");
             var hiddenField = document.createElement("input");
             hiddenField.setAttribute("type", "hidden");
