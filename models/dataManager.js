@@ -1,4 +1,4 @@
-exports.list = function(module, page, callback) {
+function loadList(module, page, callback) {
 	var perPage = 20;
 	module.find(null, null, {skip:perPage*page, limit:perPage}, function(filterErr, list){
 		module.count().exec(function(countErr, count){
@@ -19,7 +19,7 @@ exports.list = function(module, page, callback) {
 	});
 }
 
-exports.post = function(module, elements, callback) {
+function saveItem(module, elements, callback) {
 	var conditions = {_id: ""};
 	if (elements.hasOwnProperty("_id")) {
 		var conditions = {_id: elements._id};
@@ -41,5 +41,46 @@ exports.post = function(module, elements, callback) {
 			}
 			callback(err);
 		});
+	});
+};
+
+exports.listData = function(req, res, dbModule, columnNameArray) {
+	var page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
+	loadList(dbModule, page, function(result, err){
+		if (!err) {
+			result["columnName"] = columnNameArray;
+			res.send(result);
+		}
+	});
+}
+
+exports.edit = function(req, res, dbModule, columnNameArray, basePath) {
+	var _id = req.param('_id');
+	dbModule.findOne({_id: _id} ,function(err, item){
+		console.log("edit ", item);
+		if (err) {
+			console.log("edit err ",err);
+			res.redirect(basePath);
+		}
+		else {
+			res.render('edit.ejs', {test: item, editColumns:columnNameArray, basePath: basePath});
+		}
+	});
+}
+
+exports.delete = function(req, res, dbModule){
+	var _id = req.body._id;
+	dbModule.findOne({_id: _id}).remove(function(err){
+		console.log("delete " + _id);
+		if (err) {
+			console.log("delete err ",err);
+		}
+		res.end();
+	});
+};
+
+exports.post = function(req, res, dbModule){
+	saveItem(dbModule, req.body, function(err) {
+		res.end(JSON.stringify({err:err}));
 	});
 };

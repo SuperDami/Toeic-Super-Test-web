@@ -2,52 +2,27 @@ var data = require('./models/data.js');
 var dm = require('./models/dataManager.js');
 var dbModule = data.Test;
 
-var basePath = "/test";
+var showColumnArray = ["title", "testId", "price", "created_at", "productId", "published", "downloadCount"];
+var editColumnArray = ["testId", "title", "price", "coverImageUrl", "zipUrl", "productId", "published"];
 
 exports.testList = function(req, res){
-	res.render('testList.ejs', {basePath: basePath});
+	res.render('testList.ejs', {category:"test", user:req.session.user});
 }
 
 exports.listData = function(req, res) {
-	var page = req.param('page') > 0 ? Math.floor(req.param('page')) : 0;
-	dm.list(dbModule, page, function(result, err){
-		if (!err) {
-			result["columnName"] = ["title", "testId", "price", "created_at", "productId", "published", "downloadCount"];
-			res.send(result);
-		}
-	});
+	dm.listData(req, res, dbModule, showColumnArray);
 }
 
-exports.edit = function(req, res){
-	var _id = req.param('_id');
-	dbModule.findOne({_id: _id} ,function(err, test){
-		console.log("edit ", test);
-		if (err) {
-			console.log("edit err ",err);
-			res.redirect(basePath);
-		}
-		else {
-			res.render('edit.ejs', {test: test, editColumns:["testId", "title", "price", "coverImageUrl", "zipUrl", "productId", "published"], basePath: basePath});
-		}
-	});
+exports.edit = function(req, res) {
+	dm.edit(req, res, dbModule, editColumnArray, "/test");
+}
+
+exports.delete = function(req, res){
+	dm.delete(req, res, dbModule);
 };
 
-exports.deleteTest = function(req, res){
-	var _id = req.body._id;
-	dbModule.findOne({_id: _id}).remove(function(err){
-		console.log("delete " + _id);
-		if (err) {
-			console.log("delete err ",err);
-		}
-		res.end();
-	});
-};
-
-exports.postTest = function(req, res){
-	var item = req.body;
-	dm.post(dbModule, item, function(err) {
-		res.end(JSON.stringify({err:err, url:basePath}));
-	});
+exports.post = function(req, res){
+	dm.post(req, res, dbModule);
 };
 
 exports.contentPage = function(req, res){
