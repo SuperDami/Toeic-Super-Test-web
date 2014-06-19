@@ -21,6 +21,7 @@ app.use(express.session({
     secret: 'secret',
     store: new MongoStore({
         db: 'session',
+        port: '10080',
         host: process.env.MONGO_URL || 'localhost',
         clear_interval: 60 * 60
     }),
