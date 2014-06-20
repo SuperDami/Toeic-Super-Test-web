@@ -4,8 +4,8 @@ var dbModule = data.User;
 
 var showColumnArray = ["username"];
 
-exports.userList = function(req, res){
-	res.render('testList.ejs', {category:"user", user:req.session.user});
+exports.adminList = function(req, res){
+	res.render('testList.ejs', {category:"admin", admin:req.session.user});
 }
 
 exports.listData = function(req, res) {

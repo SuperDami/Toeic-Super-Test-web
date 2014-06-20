@@ -1,14 +1,12 @@
 var express = require('express');
 var url = require('url');
 var app = express();
-var data = require('./models/data.js');
-var Test = data.Test;
-var Question = data.AnsweredQuestion;
 
 var testManage = require('./test.js');
 var newsManage = require('./news.js');
-var userManage = require('./user.js');
+var adminManage = require('./admin.js');
 var routes = require('./routes.js');
+var userDataManage = require('./userData.js');
 
 app.use(express.static('public'));
 app.use(express.bodyParser());
@@ -33,10 +31,13 @@ var loginCheck = function(req, res, next) {
 
 app.all('/test', loginCheck);
 app.all('/news', loginCheck);
-app.all('/user', loginCheck);
+app.all('/admin', loginCheck);
+app.all('/userData', loginCheck);
+
 app.all('/test/*', loginCheck);
 app.all('/news/*', loginCheck);
-app.all('/user/*', loginCheck);
+app.all('/admin/*', loginCheck);
+app.all('/userData/*', loginCheck);
 
 app.get('/', loginCheck, testManage.testList);
 app.get('/signin', routes.signin);
@@ -63,10 +64,15 @@ app.post('/news/delete', newsManage.delete);
 app.get('/news/editPage', newsManage.edit);
 app.get('/news/api/listData', newsManage.listData);
 
-app.get('/user', userManage.userList);
-app.post('/user/delete', userManage.delete);
-app.get('/user/api/listData', userManage.listData);
+app.get('/admin', adminManage.adminList);
+app.post('/admin/delete', adminManage.delete);
+app.get('/admin/api/listData', adminManage.listData);
 
+app.get('/userData', userDataManage.userDataList);
+app.post('/userData/delete', userDataManage.delete);
+app.get('/userData/api/listData', userDataManage.listData);
+
+app.post('/postUserData', userDataManage.postUserData);
 app.get('/lastNewsContent', newsManage.lastContent);
 app.get('/testContentPage', testManage.contentPage);
 app.post('/downloadTest', testManage.download);
@@ -74,23 +80,6 @@ app.get('/main', function(req, res) {
 	res.render('main.ejs');
 });
 
-app.post('/postUserData', function(req, res) {
-	var deviceId = req.body.deviceId;
-	var userDataArray = req.body.userData;
-	for (var i = 0; i < userDataArray.length; i++) {
-		var data = userDataArray[i];
-		var question = new Question();
-		for (var key in data) {
-			question[key] = data[key];
-		};
-		question["deviceId"] = deviceId;
-		console.log(question);
-		question.save(function(err) {
-			res.end(JSON.stringify({err:err}));
-		});
-	};
 
-	res.end();
-})
 
 app.listen(process.env.PORT || 3000);

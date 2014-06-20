@@ -14,15 +14,17 @@ var Test = mongoose.Schema({
 });
 
 var AnsweredQuestion = mongoose.Schema({
-    zId: Number,
-    partId: Number,
-    testId: String,
-    questionId: Number,
-    topicId: Number,
-    answer: String,
-    isRight: Boolean,
-    date: String,
-    deviceId: String
+    ZID: Number,
+    ZTEST_ID: String,
+    ZPART_ID: Number,
+    ZTOPIC_ID: Number,
+    ZQUESTION_ID: Number,
+    USETIME: Number,
+    IS_RIGHT: Boolean,
+    DATE: String,
+    ANSWER: String,
+    ZIS_MAGIC: Boolean,
+    DEVICE_ID: String,
 });
 
 var News = mongoose.Schema({
