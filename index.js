@@ -80,6 +80,4 @@ app.get('/main', function(req, res) {
 	res.render('main.ejs');
 });
 
-
-
 app.listen(process.env.PORT || 3000);

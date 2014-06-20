@@ -69,7 +69,7 @@ div.tipContent {
 
 .cellCover {
 	box-shadow: 0px 2px 3px #A8A8A8;
-	width:141px; height: 200px;
+	width:120px; height: 160px;
 }
 
 div.title {
@@ -82,12 +82,6 @@ div.title {
 }
 
 div.cell {
-	width:140px; height:270px;
-}
-
-input.categoryBtn {
-	margin: 0 auto;
-	height: 27px;
-	font-size:16px; font-family:"Hiragino Kaku Gothic ProN";
+	width:120px; height:200px;
 }
 </style>

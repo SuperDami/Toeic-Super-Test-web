@@ -193,8 +193,8 @@
                     $("#pageControl").hide();
                 }
                 else {
-                    var gridHeight = 290*Math.ceil(testList.length / 4);
-                    var leftMargin = Math.floor((600 - 4 * 140 - 3 * 10) / 2.0);
+                    var gridHeight = 220*Math.ceil(testList.length / 4) + 30;
+                    var leftMargin = Math.floor((600 - 4 * 120 - 3 * 20) / 2.0);
                     $("#selectGrid").height(gridHeight);
                     for (var i in testList) {
                         var test = testList[i];
@@ -210,8 +210,8 @@
                             console.log(test + " set downloaded");
                         }
 
-                        var left = leftMargin + (i % 4) * 140 + (i % 4)*10;
-                        var top = Math.floor(i/4)*270 + Math.floor(i/4 + 1)*10;
+                        var left = leftMargin + (i % 4) * 120 + (i % 4)*20;
+                        var top = Math.floor(i/4)*200 + Math.floor(i/4)*20 + 10;
                         var cell = $("<div>").addClass("cell");
                         cell.css({"float":"left", "text-align": "center", "position":"absolute", "left":left + "px", "top": top + "px"});
 
@@ -244,12 +244,13 @@
             });
         }
 
-    	function collectionSelect(button) {
-            $(".categoryBtn").each(function(){
-                $(this).css({"color":"black"});
+    	function collectionSelect(a) {
+            $(".categorySelect").each(function(){
+                $(this).css({color:"#222"});
             })
-            $(button).css({"color":"gray"});
-            var categoryName = $(button).attr("id");
+            $(a).css({color:"#999"});
+
+            var categoryName = $(a).attr("name");
             if (categoryName === "restore") {
                 window.location = "com.alc.topic.supertest.restore://";
             }
@@ -287,20 +288,32 @@
             form.submit();
     	}
 	</script>
+    <style type="text/css">
+        .categorySelect {
+          color: #222;
+          font-size:14px; 
+          font-family:"Hiragino Kaku Gothic ProN";
+          margin-top: 10px;
+          margin-bottom: 10px; 
+        }
+
+        .categorySelect:hover {
+            color: #999;
+        }
+    </style>
 	</head>
 	<body style="margin: 0; background-color:#EEEEEE">
 		<div id='container' style="width:100%; height:100%; text-align:center;">
 			<a id='header' style="width:100%; height:280px; text-align:center;" href="http://google.com" target="_self">
 				<img src='/images/header_ad.png' style="width:100%; margin:0 auto">
 			</a>
-            <div style="width:100%; height:27px;">
-                <input type='button' id="popular" class="categoryBtn" style="float:left" value='人気 コンテンシ' onclick="collectionSelect(this)">
-                <input type='button' id="myLibrary" class="categoryBtn" style="float:left; margin-left:16px" value='マイ•ライブラリ' onclick="collectionSelect(this)">
-                <input type='button' id="news" class="categoryBtn" style="float:left; margin-left:16px" value='ニュース' onclick="collectionSelect(this)">
-                <input type='button' id="restore" class="categoryBtn" style="width:108px; float:right; background-image:url('/images/restore_btn.png'); background-repeat:no-repeat;" onclick="collectionSelect(this)">
+            <div style="width:100%; height:28px">
+                <a href="#" name="popular" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">人気 コンテンシ</a>
+                <a href="#" name="myLibrary" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">マイ•ライブラリ</a>
+                <a href="#" name="news" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">ニュース</a>
+                <a href="#" name="restore" class="categorySelect" onclick="collectionSelect(this)" style="float:right; margin-right:20px">リストア</a>
             </div>
-            <hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade>
-
+            <div><hr style="margin-left:20px; margin-right:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade></div>
             <div id="mainContainer" style="width:100%; text-align:center;">
                 <div id="selectGrid" hidden>
                     <div style="position:absolute">
