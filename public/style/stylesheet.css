@@ -74,14 +74,13 @@ div.tipContent {
 
 div.title {
 	display: table;
-	width: 100%; height: 33px;
 	text-align: center;
 	clear:both;
-	margin-top: 5px; margin-bottom: 5px;
+	width: 100%; height: 40px;
 }
 
 div.title span {
-	height: 33px;
+	height: 40px;
 	display: table-cell; 
     vertical-align: middle; 
     text-align: center; 

@@ -92,10 +92,9 @@
         }
 
         function refreshNewsContent() {
-            $($("#newsContent")).show();
-            $($("#selectGrid")).hide();
-            $($("#pageControl")).hide();
-
+            $("#newsContent").show();
+            $("#selectGrid").hide();
+            $("#pageControl").hide();
 
             $.get("/lastNewsContent", function(result){
                 if (!result instanceof Array) {
@@ -166,15 +165,17 @@
                 return;
             }
 
-            $($("#newsContent")).hide();
-            $($("#selectGrid")).show();
+            $("#newsContent").hide();
+            $("#selectGrid").show();
 
             $.get("/testContentPage", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdString}, function(data){
                 console.log("jaquery :", data);
                 testList = data.testList;
                 var selectGridDiv = $($("#selectGrid"));
                 selectGridDiv.empty();
-
+                var hasPrepage = data.prePage;
+                var hasNextpage = data.nextPage;
+                var pageCount = data.pageCount;
                 delete selectionCells;
                 selectionCells = {};
 
@@ -205,8 +206,10 @@
 
                         var cell = $("<div>").addClass("cell").css({"float":"left", "margin":"5px 5px 5px 5px"});
                         var imageCover = $("<img>").addClass("imageCover").attr({src:test.coverImageUrl});
-                        var title = $("<div>").addClass("title");
-                        title.append($("<span>").text(test.title));
+
+                        var tempNode = $("<div>").addClass("title");
+                        var title = $("<div>").css({"width": "100%", "height":"40px","margin-top":"5px", "margin-bottom":"5px"}).append(tempNode);
+                        tempNode.append($("<span>").text(test.title));
                         var downloadBtn = createButtonWith(test);
 
                         cell.append(imageCover).append(title).append(downloadBtn);
@@ -215,19 +218,32 @@
                     selectionCells[testId] = cell;
                     $("#pageControl").show();
 
-                    var pageIndex = data.pageIndex;
-                    var pageCount = data.pageCount;
 
-                    var preBtn = $("#pageControl button")[0]; 
-                    var nextBtn = $("#pageControl button")[1];
-                    preBtn.disabled = data.prePage ? false : true;
-                    nextBtn.disabled = data.nextPage ? false : true;
+                    var preBtn = $(".pagination li").eq(0);
+                    var nextBtn = $(".pagination li").eq(2);
 
-                    preBtn.onclick = function(){ 
-                        goToPageIndex(pageIndex - 1); };
-                    nextBtn.onclick = function(){
-                        goToPageIndex(pageIndex + 1); };
-                    $("#pageControl a").text((pageIndex + 1) + "/" + pageCount);
+                    if (hasPrepage) {
+                        preBtn.removeClass("disabled");
+                        preBtn.find("a").click(function() {
+                            goToPageIndex(page - 1);
+                        });
+                    }
+                    else {
+                        preBtn.addClass("disabled");
+                        preBtn.find("a").off('click');
+                    }
+
+                    if (hasNextpage) {
+                        nextBtn.removeClass("disabled");
+                        nextBtn.find("a").click(function() {
+                            goToPageIndex(page + 1);
+                        });
+                    }
+                    else {
+                        nextBtn.addClass("disabled");
+                        nextBtn.find("a").off('click');
+                    }
+                    $(".pagination li a").eq(1).text((page + 1) + "/" + pageCount);
                 }
             });
         }
@@ -305,11 +321,13 @@
             <div id="mainContainer" style="width:600px; text-align:center; margin: 0 auto;">
                 <div id="selectGrid" style="width:100%; height:auto" hidden>
                 </div>
-                <div id="pageControl" style="float:left; width:100%; height:140px; text-align:center; margin: 40px auto;" hidden>
-                    <button class="page" style="border-radius: 2px"><</button>
-                    <a></a>
-                    <button class="page" style="border-radius: 2px">></button>
-                </div>             
+                <div id="pageControl" class="clearfix" style="width:100%; height:140px; float:left;" hidden>
+                    <ul class="pagination pull-center">
+                      <li class="disabled"><a href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                      <li class="disabled"><a></a></li>
+                      <li class="disabled"><a href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                    </ul>                                        
+                </div>
                 <div id="newsContent" hidden>
                     <div class="container-fluid">
                         <div class="container container-pad" id="property-listings">
