@@ -73,8 +73,8 @@
         function createButtonWith(test) {
             var downloadBtn;
             if (test.status === "downloaded") {
-                downloadBtn = $("<label>");
-                downloadBtn.addClass("downloadedLabel").text("ダウンロード済み");
+                downloadBtn = $("<button>");
+                downloadBtn.addClass("downloadBtn downloadedLabel").text("ダウンロード済み").attr("disabled", true);
             } else if (test.status === "purchased") {
                 downloadBtn = $("<button>");
                 downloadBtn.addClass("downloadBtn").text("ダウンロード");
@@ -82,8 +82,9 @@
                     downloadTest(test);
                 });
             } else {
+                var text = (test.price ? "¥" + test.price : "フリー");
                 downloadBtn = $("<button>");
-                downloadBtn.addClass("purchaseBtn").text("¥" + test.price);
+                downloadBtn.addClass("purchaseBtn").text(text);
                 downloadBtn.click(function(){ 
                     purchaseTest(test);
                 });
@@ -134,11 +135,11 @@
 
                     var h4 = $("<h4>").addClass("media-heading");
                     var a =$("<a>").attr({href:"#", target:"_parent"}).text(title)
-                    var small = $("<small>").addClass("pull-right").text(dateString);
+                    var small = $("<small>").addClass("pull-right").text(dateString).css({"width":"100%", "margin": "20px auto 5px auto", "text-align":"right"});
                     h4.append(a.append(small));
                     mediaBody.append(h4);
 
-                    mediaBody.append($("<p>").addClass("text-left").text(content));
+                    mediaBody.append($("<p>").addClass("text-left").text(content).css({"width":"100%"}));
                     mediaBody.append($("<span>").addClass("fnt-smaller fnt-lighter fnt-arial").text(author));
 
                     leftDiv.append(mediaBox);
@@ -295,8 +296,8 @@
     <style type="text/css">
         .categorySelect {
           color: #222;
-          font-size:14px; 
-          font-family:"Hiragino Kaku Gothic ProN";
+          font-size:16px; 
+          font-family:"Hiragino Kaku Gothic Pro";
           margin-top: 10px;
           margin-bottom: 10px; 
         }
@@ -317,7 +318,7 @@
                 <a href="#" name="news" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">ニュース</a>
                 <a href="#" name="restore" class="categorySelect" onclick="collectionSelect(this)" style="float:right; margin-right:20px">リストア</a>
             </div>
-            <div><hr style="margin-left:20px; margin-right:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade></div>
+            <div><hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade></div>
             <div id="mainContainer" style="width:600px; text-align:center; margin: 0 auto;">
                 <div id="selectGrid" style="width:100%; height:auto" hidden>
                 </div>
@@ -328,7 +329,7 @@
                       <li class="disabled"><a href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                     </ul>                                        
                 </div>
-                <div id="newsContent" hidden>
+                <div id="newsContent" style="margin-top:-20px" hidden>
                     <div class="container-fluid">
                         <div class="container container-pad" id="property-listings">
                             <div class="row">
