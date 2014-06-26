@@ -27,7 +27,7 @@
                     console.log("puchased testId", testId);
 
                     var cell = selectionCells[testId];
-                    var element = cell.find("button");
+                    var element = $(cell).find("button");
                     console.log(element);
 
                     var newButton = createButtonWith(test);
@@ -48,7 +48,7 @@
 
                     test.status = "downloaded"
                     var cell= selectionCells[testId];
-                    var element = cell.find("button");
+                    var element = $(cell).find("button");
                     console.log(element);
 
                     var newButton = createButtonWith(test);
@@ -214,8 +214,8 @@
 
                         cell.append(imageCover).append(title).append(downloadBtn);
                         selectGridDiv.append(cell);
+                        selectionCells[testId] = cell;
                     }
-                    selectionCells[testId] = cell;
                     $("#pageControl").show();
 
 
