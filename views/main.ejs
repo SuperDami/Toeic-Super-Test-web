@@ -225,26 +225,26 @@
 
                     if (hasPrepage) {
                         preBtn.removeClass("disabled");
-                        preBtn.find("a").click(function() {
-                            goToPageIndex(page - 1);
-                        });
+                        // preBtn.find("a").click(function() {
+                        //     goToPageIndex(page - 1);
+                        // });
                     }
                     else {
                         preBtn.addClass("disabled");
-                        preBtn.find("a").off('click');
+                        // preBtn.find("a").off('click');
                     }
 
                     if (hasNextpage) {
                         nextBtn.removeClass("disabled");
-                        nextBtn.find("a").click(function() {
-                            goToPageIndex(page + 1);
-                        });
+                        // nextBtn.find("a").click(function() {
+                        //     goToPageIndex(page + 1);
+                        // });
                     }
                     else {
                         nextBtn.addClass("disabled");
-                        nextBtn.find("a").off('click');
+                        // nextBtn.find("a").off('click');
                     }
-                    $(".pagination li a").eq(1).text((page + 1) + "/" + pageCount);
+                    $(".pagination li a").eq(1).text((page + 1) + "/" + pageCount).data("current", page);
                 }
             });
         }
@@ -292,6 +292,26 @@
             document.body.appendChild(form);
             form.submit();
     	}
+
+        $(document).ready(function() {
+            var pre = $(".pagination li a").eq(0);
+            var next = $(".pagination li a").eq(2);
+            var currentElem = $(".pagination li a").eq(1);
+
+            pre.click(function() {
+                if($(this).parent().hasClass("disabled")) {
+                    return;
+                }
+                goToPageIndex(currentElem.data("current") - 1);
+            });
+
+            next.click(function() {
+                if($(this).parent().hasClass("disabled")) {
+                    return;
+                }
+                goToPageIndex(currentElem.data("current") + 1);
+            });
+        });
 	</script>
     <style type="text/css">
         .categorySelect {

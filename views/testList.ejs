@@ -62,14 +62,6 @@
 				
 				var preBtn = $(".pagination li").eq(0);
 				var nextBtn = $(".pagination li").eq(2);
-
-				preBtn.find("a").click(hasPrepage ? function() {
-                	reloadList(pageIndex - 1);
-                } : null);
-                nextBtn.find("a").click(hasNextpage ? function() {
-                	reloadList(pageIndex + 1);
-                } : null);
-
 				if (hasPrepage) {
 					preBtn.removeClass("disabled");
 				}
@@ -82,7 +74,8 @@
 				else {
 					nextBtn.addClass("disabled");
 				}
-				$(".pagination li a").eq(1).text((pageIndex + 1) + "/" + pageCount);
+
+				$(".pagination li a").eq(1).text((pageIndex + 1) + "/" + pageCount).data('current', pageIndex);
 			});
 		}
 
@@ -129,6 +122,24 @@
 					$(this).removeClass("active");
 				}
 			});
+
+			console.log($(".pagination li"));
+			var preBtn = $(".pagination li").eq(0);
+			var nextBtn = $(".pagination li").eq(2);
+			var currentElem = $(".pagination li").eq(1);
+			preBtn.find("a").click(function() {
+				if ($(this).parent().hasClass('disabled')) {
+					return;
+				}
+				reloadList(currentElem.find('a').data('current') - 1);
+			});
+			nextBtn.find("a").click(function() {
+				if ($(this).parent().hasClass('disabled')) {
+					return;
+				}
+				reloadList(currentElem.find('a').data('current') + 1);
+			});
+
 
 			reloadList(0);
 		});
