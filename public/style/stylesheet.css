@@ -23,14 +23,14 @@ hr {
 
 div.tipTitle {
 	text-align: center;
-	margin:45px auto 22px auto;
+	margin:45px auto auto auto;
 	width: 270px; height: 30px;
-	font-size:18px; font-family:"Hiragino Kaku Gothic ProN";
+	font-size:16px; font-family:"Hiragino Kaku Gothic ProN";
 	color:#333333;
 }
 
 div.tipContent {
-	text-align: left;
+	text-align: center;
 	margin:0px auto 0px auto;
 	width: 270px; height: 68px;
 	font-size:16px; font-family:"Hiragino Kaku Gothic ProN";
