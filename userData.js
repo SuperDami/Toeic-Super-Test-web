@@ -2,7 +2,7 @@ var data = require('./models/data.js');
 var dbModule = data.AnsweredQuestion;
 var dm = require('./models/dataManager.js');
 
-var showColumnArray = ["DEVICE_ID", "ZTEST_ID", "ZPART_ID", "ZQUESTION_ID", "USETIME", "IS_RIGHT", "ANSWER", "DATE", "ZIS_MAGIC"];
+var showColumnArray = ["USER_ID", "ZTEST_ID", "ZPART_ID", "ZQUESTION_ID", "USETIME", "IS_RIGHT", "ANSWER", "DATE"];
 
 exports.userDataList = function(req, res){
 	res.render('testList.ejs', {category:"userData", admin:req.session.user});
@@ -25,8 +25,7 @@ exports.postUserData = function(req, res) {
 		for (var key in data) {
 			question[key] = data[key];
 		};
-		question["DEVICE_ID"] = deviceId;
-		console.log(question);
+		console.log("user post data: ", question);
 		question.save(function(err) {
 			res.end(JSON.stringify({err:err}));
 		});

@@ -25,6 +25,7 @@ var AnsweredQuestion = mongoose.Schema({
     ANSWER: String,
     ZIS_MAGIC: Boolean,
     DEVICE_ID: String,
+    USER_ID: String,
 });
 
 var News = mongoose.Schema({
