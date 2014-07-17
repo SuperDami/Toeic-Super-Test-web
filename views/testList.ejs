@@ -27,8 +27,15 @@
 					var cell = $("<th>").text(name);
 					row.append(cell);
 				}	
-				row.append($("<th>").text("Edit"));
-				row.append($("<th>").text("Delete"));
+
+				var options = <%-JSON.stringify(option)%>
+				if (options.indexOf("edit") >= 0) {
+					row.append($("<th>").text("Edit"));
+				}
+				if (options.indexOf("delete") >= 0) {
+					row.append($("<th>").text("Delete"));
+				}
+
 
 				$("tbody tr").remove();
 				for (var i in list) {
@@ -43,20 +50,24 @@
 						row.append(cell);
 					}
 
-					var cell1 = $("<td>");
-					var editBtn = $("<a>").addClass("btn btn-primary btn-xs").attr('href', basePath + "/editPage?_id=" + item['_id']);
-					editBtn.append($("<span>").addClass("glyphicon glyphicon-pencil"));
-					editBtn.attr({"data-title":"Edit","data-toggle":"modal","data-placement":"top","rel":"tooltip"});
-					cell1.append($("<p>").append(editBtn));
+					if (options.indexOf("edit") >= 0) {
+						var cell1 = $("<td>");
+						var editBtn = $("<a>").addClass("btn btn-primary btn-xs").attr('href', basePath + "/editPage?_id=" + item['_id']);
+						editBtn.append($("<span>").addClass("glyphicon glyphicon-pencil"));
+						editBtn.attr({"data-title":"Edit","data-toggle":"modal","data-placement":"top","rel":"tooltip"});
+						cell1.append($("<p>").append(editBtn));
+						row.append(cell1);
+					}
 
-					var cell2 = $("<td>");
-					var deleteBtn = $("<button>").addClass("btn btn-danger btn-xs");
-					deleteBtn.append($("<span>").addClass("glyphicon glyphicon-trash"));
-					deleteBtn.attr({"data-title":"Delete","data-toggle":"modal","data-target":"#delete","data-placement":"top","rel":"tooltip"});
-					bindOptionButton(deleteBtn, item);
-					cell2.append($("<p>").append(deleteBtn));
-
-					row.append(cell1).append(cell2);
+					if (options.indexOf("delete") >= 0) {
+						var cell2 = $("<td>");
+						var deleteBtn = $("<button>").addClass("btn btn-danger btn-xs");
+						deleteBtn.append($("<span>").addClass("glyphicon glyphicon-trash"));
+						deleteBtn.attr({"data-title":"Delete","data-toggle":"modal","data-target":"#delete","data-placement":"top","rel":"tooltip"});
+						bindOptionButton(deleteBtn, item);
+						cell2.append($("<p>").append(deleteBtn));
+						row.append(cell2);
+					}
 					$("tbody").append(row);
 				}
 				
@@ -92,20 +103,26 @@
 		}
 
 		function categorySelected(a) {
-			$(".navbar-left li").each(function(){
-				$(this).removeClass("active");
-			});
+			// $(".navbar-left li").each(function(){
+			// 	$(this).removeClass("active");
+			// });
 
-			$(a).parent().addClass("active");
-			basePath = "/" + $(a).attr("name");
-			reloadList(0);
+			// $(a).parent().addClass("active");
+			// basePath = "/" + $(a).attr("name");
+			// reloadList(0);
+			window.location = "/" + $(a).attr("name");
 		}
 
 		$(document).ready(function() {
-			$("#addBtn")[0].onclick = function() {
-				window.location = basePath + "/editPage";
-			};
-
+			var options = <%-JSON.stringify(option)%>
+			if (options.indexOf("add") >= 0) {
+				$("#addBtn")[0].onclick = function() {
+					window.location = basePath + "/editPage";
+				};
+			}
+			else {
+				$("#addBtn").hide();
+			}
 
 			var category = <%-JSON.stringify(category)%>;
 			var admin = <%-JSON.stringify(admin)%>
@@ -170,7 +187,7 @@
                 <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span><span
                     class="icon-bar"></span><span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="#">Toeic Super Test</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -197,7 +214,6 @@
 <div class="container">
 	<div class="row">
         <div class="col-md-12">
-        <h4>Bootstrap Snipp for Datatable</h4>
         <div class="table-responsive">
         	<button id="addBtn" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-plus"></span></button>
         	<table id="mytable" class="table table-bordred table-striped">                   

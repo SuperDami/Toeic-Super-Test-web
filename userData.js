@@ -5,7 +5,7 @@ var dm = require('./models/dataManager.js');
 var showColumnArray = ["USER_ID", "ZTEST_ID", "ZPART_ID", "ZQUESTION_ID", "USETIME", "IS_RIGHT", "ANSWER", "DATE"];
 
 exports.userDataList = function(req, res){
-	res.render('testList.ejs', {category:"userData", admin:req.session.user});
+	res.render('testList.ejs', {category:"userData", admin:req.session.user, option:["delete"]});
 }
 
 exports.listData = function(req, res) {
