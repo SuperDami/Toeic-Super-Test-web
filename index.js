@@ -17,7 +17,7 @@ app.use(express.session({
     secret: 'secret',
     cookie: {
         httpOnly: false,
-        maxAge: 60 * 60 * 1000
+        maxAge: 60 * 60 * 1000 * 24 * 7
     }
 }));
 

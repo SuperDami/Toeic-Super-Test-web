@@ -1,10 +1,16 @@
 var data = require('./models/data.js');
     User  = data.User;
+var md5 = require('MD5');
+var encryptPart = "serge5Y$%YHYJZEARG%HB"
 
+function encryptPassword(password) {
+    return md5(md5(password) + encryptPart);
+}
 /*ユーザー登録機能*/
 exports.signup = function(req, res){
     console.log("sign up ", req.body);
     var username = req.body.username;
+    req.body.password = encryptPassword(req.body.password);
 
     User.find({username:username}).count().exec(function(countErr, count){
         var url;
@@ -35,7 +41,7 @@ exports.signup = function(req, res){
 exports.signin = function(req, res) {
     console.log("login", req.query);
     var username = req.query.username;
-    var password = req.query.password;
+    var password = encryptPassword(req.query.password);
     var query = { "username": username, "password": password };
     User.find(query, function(err, data){
         if(err){

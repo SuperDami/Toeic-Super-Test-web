@@ -39,7 +39,7 @@ var News = mongoose.Schema({
 var UserSchema = new mongoose.Schema({
     username: String,
     password: String
-},{collection: 'info'});
+});
 
 Test.pre('save', function(next){
 	if (this.isNew) {
@@ -47,12 +47,6 @@ Test.pre('save', function(next){
 	};
     this.price = this.price || 0;
     this.downloadCount = this.downloadCount || 0;
-
-    console.log("save ",this);
-    next();
-});
-
-AnsweredQuestion.pre('save', function(next) {
     next();
 });
 
