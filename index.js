@@ -34,11 +34,13 @@ app.all('/test', loginCheck);
 app.all('/news', loginCheck);
 app.all('/admin', loginCheck);
 app.all('/userData', loginCheck);
+app.all('/ad', loginCheck);
 
 app.all('/test/*', loginCheck);
 app.all('/news/*', loginCheck);
 app.all('/admin/*', loginCheck);
 app.all('/userData/*', loginCheck);
+app.all('/ad/*', loginCheck);
 
 app.get('/', loginCheck, testManage.testList);
 app.get('/signin', routes.signin);
