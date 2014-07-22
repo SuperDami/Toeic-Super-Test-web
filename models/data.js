@@ -34,11 +34,18 @@ var News = mongoose.Schema({
     created_at: String,
     author: String,
     published: Boolean
-})
+});
 
-var UserSchema = new mongoose.Schema({
+var UserSchema = mongoose.Schema({
     username: String,
     password: String
+});
+
+var Ad = mongoose.Schema({
+    imageUrl: String,
+    linkUrl: String,
+    published: Boolean,
+    last_update: String,
 });
 
 Test.pre('save', function(next){
@@ -57,7 +64,13 @@ News.pre('save', function(next) {
     next();
 })
 
+Ad.pre('save', function(next){
+    this.last_update = new Date();
+    next();    
+})
+
 module.exports.Test = db.model('Test', Test);
 module.exports.News = db.model('News', News);
 module.exports.AnsweredQuestion = db.model('AnsweredQuestion', AnsweredQuestion);
 module.exports.User = db.model('User', UserSchema);
+module.exports.Ad = db.model('Ad', Ad);

@@ -7,6 +7,7 @@ var newsManage = require('./news.js');
 var adminManage = require('./admin.js');
 var routes = require('./routes.js');
 var userDataManage = require('./userData.js');
+var ad = require('./ad.js');
 
 app.use(express.static('public'));
 app.use(express.bodyParser());
@@ -77,7 +78,21 @@ app.get('/lastNewsContent', newsManage.lastContent);
 app.get('/testContentPage', testManage.contentPage);
 app.post('/downloadTest', testManage.download);
 app.get('/main', function(req, res) {
-	res.render('main.ejs');
+  ad.lastContent(function(error, ad){
+    console.log("ad ", ad);
+    if (Array.isArray(ad)) {
+      res.render('main.ejs', ad[0]);
+    }
+    else {
+      res.render('main.ejs', null);
+    }
+  });
 });
+
+app.get('/ad', ad.adList);
+app.post('/ad/post', ad.post);
+app.post('/ad/delete', ad.delete);
+app.get('/ad/editPage', ad.edit);
+app.get('/ad/api/listData', ad.listData);
 
 app.listen(process.env.PORT || 3000);
