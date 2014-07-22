@@ -11,9 +11,6 @@
   "engines": {
     "node": "0.4.x"
   },
-  "scripts": {
-    "start": "node index.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/superdami/Toeic-Super-Test-web.git"
