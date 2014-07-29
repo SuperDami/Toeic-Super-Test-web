@@ -90,6 +90,7 @@ app.get('/main', function(req, res) {
     }
   });
 });
+app.get('/productList', testManage.productList);
 
 app.get('/ad', ad.adList);
 app.post('/ad/post', ad.post);

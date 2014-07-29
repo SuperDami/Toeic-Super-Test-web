@@ -15,6 +15,30 @@
         var category = "popular";
         var selectionCells = {};
 
+        function clientUpdateProductInfo(productList) {
+            console.log(productList);
+
+            for (var i in productList) {
+                var product = productList[i]
+                var productId = product.productId;
+                for (var j in testList) {
+                    var test = testList[j];
+                    if (test.productId === productId &&
+                        test.status === "purchaseNotabled") {
+
+                        test.price = product.price;
+                        test.status = "purchaseAbled"
+                        var cell = selectionCells[test.testId];
+                        var element = $(cell).find("button");
+                        var newButton = createButtonWith(test);
+                        element.remove();
+                        cell.append(newButton);
+                    }
+                };
+            };
+            console.log("update product info!!!!!!!!!!!!!");
+        }
+
         function clientPurchasedProductId(productId) {
             localTestIds["purchasedTestId"].push(productId);
             console.log("refresh local test ",localTestIds);
@@ -81,13 +105,17 @@
                 downloadBtn.click(function(){ 
                     downloadTest(test);
                 });
-            } else {
-                var text = (test.price ? "¥" + test.price : "フリー");
+            } else if(test.status === "purchaseNotabled"){
+                // var text = (test.price ? "¥" + test.price : "フリー");
+                downloadBtn = $("<button>");
+                downloadBtn.addClass("purchaseBtn").text("載入中").attr("disabled", true);
+            } else if (test.status === "purchaseAbled") {
+                var text = "¥" + test.price;
                 downloadBtn = $("<button>");
                 downloadBtn.addClass("purchaseBtn").text(text);
                 downloadBtn.click(function(){ 
                     purchaseTest(test);
-                });
+                });                
             }
             return downloadBtn;
         }
@@ -196,6 +224,7 @@
                         var productId = test["productId"];
                         var testId = test["testId"];
 
+                        test.status = "purchaseNotabled";
                         if (productIdArray.indexOf(productId) > -1) {
                             test.status = "purchased";
                             console.log(test + " set purchased");
@@ -245,6 +274,7 @@
                         // nextBtn.find("a").off('click');
                     }
                     $(".pagination li a").eq(1).text((page + 1) + "/" + pageCount).data("current", page);
+                    window.location = 'com.alc.topic.supertest.gotopage://' + (page);
                 }
             });
         }

@@ -68,6 +68,31 @@ exports.contentPage = function(req, res){
 	});
 };
 
+exports.productList = function(req, res){
+	var page = req.query.page;
+	var perPage = 12
+  	  , page = page > 0 ? Math.floor(page) : 0;
+
+  	var condition = {"published":true};
+  	var option = {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}};
+
+
+	dbModule.find(condition, null, option, function(error, results){
+		console.log('productList at page :', page);
+		if (!error) {
+			var array = new Array();
+			for(var i in results) {
+				var productId = results[i]['productId'];
+				array.push(productId);
+			}
+			console.log('product array: ', array);
+			res.send(array);
+			return;
+		}
+		res.send(error);
+	});
+};
+
 exports.download = function(req, res){
 	var test = JSON.parse(req.body.test);
 	dbModule.findOne({testId: test.testId}, function(err, test){
