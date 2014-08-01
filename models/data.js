@@ -14,7 +14,8 @@ var Test = mongoose.Schema({
 });
 
 var AnsweredQuestion = mongoose.Schema({
-    ZID: Number,
+    ZMODE: Number,
+    ZTITLE: String,
     ZTEST_ID: String,
     ZPART_ID: Number,
     ZTOPIC_ID: Number,
