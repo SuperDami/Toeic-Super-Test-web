@@ -150,25 +150,26 @@
                     var mediaBox = $("<div>").addClass("brdr bgc-fff pad-10 box-shad btm-mrg-20 property-listing");
                     var media = $("<div>").addClass("media");
                     mediaBox.append(media);
+                    media.append(content);
 
-                    if (image) {
-                        media.append($("<a>").addClass("pull-left"));
-                        media.append($("<img>").addClass("img-responsive").attr({alt:"image", src:""}));
-                    };
+                    // if (image) {
+                    //     media.append($("<a>").addClass("pull-left"));
+                    //     media.append($("<img>").addClass("img-responsive").attr({alt:"image", src:""}));
+                    // };
 
-                    media.append($("<div>").addClass("clearfix visible-sm"));
-                    var mediaBody = $("<div>").addClass("media-body fnt-smaller");
-                    media.append(mediaBody);
-                    mediaBody.append($("<a>").attr({href:"#", target:"_parent"}));
+                    // media.append($("<div>").addClass("clearfix visible-sm"));
+                    // var mediaBody = $("<div>").addClass("media-body fnt-smaller");
+                    // media.append(mediaBody);
+                    // mediaBody.append($("<a>").attr({href:"#", target:"_parent"}));
 
-                    var h4 = $("<h4>").addClass("media-heading");
-                    var a =$("<a>").attr({href:"#", target:"_parent"}).text(title)
-                    var small = $("<small>").addClass("pull-right").text(dateString).css({"width":"100%", "margin": "20px auto 5px auto", "text-align":"right"});
-                    h4.append(a.append(small));
-                    mediaBody.append(h4);
+                    // var h4 = $("<h4>").addClass("media-heading");
+                    // var a =$("<a>").attr({href:"#", target:"_parent"}).text(title)
+                    // var small = $("<small>").addClass("pull-right").text(dateString).css({"width":"100%", "margin": "20px auto 5px auto", "text-align":"right"});
+                    // h4.append(a.append(small));
+                    // mediaBody.append(h4);
 
-                    mediaBody.append($("<p>").addClass("text-left").text(content).css({"width":"100%"}));
-                    mediaBody.append($("<span>").addClass("fnt-smaller fnt-lighter fnt-arial").text(author));
+                    // mediaBody.append($("<p>").addClass("text-left").text(content).css({"width":"100%"}));
+                    // mediaBody.append($("<span>").addClass("fnt-smaller fnt-lighter fnt-arial").text(author));
 
                     leftDiv.append(mediaBox);
                 }
@@ -399,8 +400,8 @@
                                 </div><!-- End Col -->
                             </div><!-- End row -->
                         </div><!-- End container -->
-                    <div style="float:left; height:80px">
-                    </div>
+                        <div style="float:left; height:80px">
+                        </div>
                     </div>                
                 </div>
             </div> 

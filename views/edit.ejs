@@ -7,6 +7,8 @@
 		    label { margin-left: auto;}
 		    div.inputText {width:700px; margin-top: 20px;}
 	    </style>
+	    <link rel='stylesheet' type='text/css' href='/style/stylesheet.css'/>
+    	<link rel='stylesheet' type='text/css' href='/style/newsContentStyle.css'/>
 	    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
@@ -50,6 +52,7 @@
 
 	        	// var form = $("<form>").attr({id:"postTestForm", method:"post"});
 	        	var fieldset = $("fieldset");
+	        	var preview;
 	        	for (var i in editColumns) {
 	        		var columnName = editColumns[i];
 
@@ -62,7 +65,15 @@
 	        			input = $("<textarea>").attr({id:columnName, name:columnName}).addClass("form-control").css({height:"200px"});
 		        		if (params.hasOwnProperty(columnName)) {
 		        			input.val(params[columnName]);
-		        		}	        			
+		        		}	    
+		        		var button = $("<button>").addClass("btn btn-sm text-center").attr({type:"button"}).text("Preview").click(function() {
+		        			var content = $("fieldset textarea").val();
+		        			$(".media").empty().append(content);
+		        		});
+	                    var mediaBox = $("<div>").addClass("brdr bgc-fff pad-10 box-shad btm-mrg-20 property-listing text-center").css({"width":"540px"});
+	                    var media = $("<div>").addClass("media");
+	                    mediaBox.append(media);
+	                    preview = $("<div>").css({"width":"540px"}).append(button).append(mediaBox);
 	        		}
 	        		else {
 	        			input = $("<input>").attr({id:columnName, name:columnName}).addClass("form-control");
@@ -81,8 +92,10 @@
 	        		}
 	        		div.append(input);
 	        		formGroup.append(label).append(div);
-
 	        		fieldset.append(formGroup);
+	        		if (preview) {
+	        			fieldset.append(preview);
+	        		}
 	        	};
 
 		        var formGroup = $("<div>").addClass("form-group");
