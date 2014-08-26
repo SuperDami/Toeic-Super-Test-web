@@ -61,6 +61,26 @@
             }
         }
 
+        function clientStartDownloadingTestId(testId) {
+            localTestIds["fetchingTestId"].push(testId);
+
+            for (var i in testList) {
+                var test = testList[i];
+                if(test.testId === testId) {
+                    console.log("downloading testId", testId);
+
+                    test.status = "downloading"
+                    var cell= selectionCells[testId];
+                    var element = $(cell).find("button");
+                    console.log(element);
+
+                    var newButton = createButtonWith(test);
+                    element.remove();
+                    cell.append(newButton);
+                }
+            }
+        }
+
         function clientDownloadedTestId(testId) {
             localTestIds["fetchedTestId"].push(testId);
             console.log("refresh local test ",localTestIds);
@@ -116,6 +136,9 @@
                 downloadBtn.click(function(){ 
                     purchaseTest(test);
                 });                
+            } else if (test.status === 'downloading') {
+                downloadBtn = $("<button>");
+                downloadBtn.addClass("downloadBtn downloadedLabel").text("ダウンロード中");
             }
             return downloadBtn;
         }
@@ -179,6 +202,8 @@
         function refreshCategoryContent(categoryName, page, params) {
             var testIdArray = [];
             var productIdArray = [];
+            var downloadingTestIdArray = [];
+
             var testIdsString = "";
             var productIdString = "";
             if (Array.isArray(params.fetchedTestId)) {
@@ -188,6 +213,9 @@
             if (Array.isArray(params.purchasedTestId)) {
                 productIdArray = params.purchasedTestId;
                 productIdString = params.purchasedTestId.join(',');
+            }
+            if (Array.isArray(params.fetchingTestId)) {
+                downloadingTestIdArray = params.fetchingTestId;
             }
 
             if (categoryName === "news") {
@@ -233,6 +261,10 @@
                         if (testIdArray.indexOf(testId) > -1) {
                             test.status = "downloaded";
                             console.log(test + " set downloaded");
+                        }
+                        if (downloadingTestIdArray.indexOf(testId) > -1) {
+                            test.status = "downloading";
+                            console.log(test + " set downloading");
                         }
 
                         var cell = $("<div>").addClass("cell").css({"float":"left", "margin":"5px 5px 5px 5px"});
@@ -376,7 +408,7 @@
                 <a href="#" name="popular" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">人気 コンテンツ</a>
                 <a href="#" name="myLibrary" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">マイ•ライブラリ</a>
                 <a href="#" name="news" class="categorySelect" onclick="collectionSelect(this)" style="float:left; margin-left:20px">ニュース</a>
-                <a href="#" name="restore" class="categorySelect" onclick="collectionSelect(this)" style="float:right; margin-right:20px">リストア</a>
+                <a href="#" name="restore" class="categorySelect" onclick="collectionSelect(this)" style="float:right; margin-right:20px">購入履歴確認</a>
             </div>
             <div><hr style="margin-left:20px; border-bottom-style:none; border-top-color:#AAAAAA" noshade></div>
             <div id="mainContainer" style="width:600px; text-align:center; margin: 0 auto;">
