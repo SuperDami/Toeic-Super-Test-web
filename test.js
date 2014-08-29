@@ -33,9 +33,6 @@ exports.contentPage = function(req, res){
   	var testIdArray = req.query.fetchedTestId.split(',');
 	var productIdArray = req.query.purchasedTestId.split(',');
 
-	console.log("productIdArray :",productIdArray);
-	console.log("fetchedTestId :",testIdArray);
-
   	var condition = {"published":true};
   	var option;
 
@@ -48,10 +45,15 @@ exports.contentPage = function(req, res){
 		option = {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}};
 	}
 
+	console.log("DB load home page content at page: ", page);
 	dbModule.find(condition, null, option, function(filterErr, results){
+		if (filterErr) {
+			console.error("DB load home page content: ", filterErr);
+		}
 		dbModule.find(condition).count().exec(function(countErr, count){
 			if (filterErr || countErr) {
 				res.send(filterErr || countErr);
+				console.error("DB load home page content count: ", countErr);
 			}
 			else {
 				var pageCount = Math.ceil(count/perPage);
@@ -76,26 +78,32 @@ exports.productList = function(req, res){
   	var condition = {"published":true};
   	var option = {skip:perPage*page, limit:perPage, sort:{downloadCount: -1}};
 
-
+	console.log('Load published product id list at page :', page);
 	dbModule.find(condition, null, option, function(error, results){
-		console.log('productList at page :', page);
-		if (!error) {
+		if (error) {
+			console.error("Load problish product id list error: ", error);
+			res.send(error);
+		}
+		else {
 			var array = new Array();
 			for(var i in results) {
 				var productId = results[i]['productId'];
 				array.push(productId);
 			}
-			console.log('product array: ', array);
 			res.send(array);
 			return;
 		}
-		res.send(error);
 	});
 };
 
 exports.download = function(req, res){
 	var test = JSON.parse(req.body.test);
-	dbModule.findOne({testId: test.testId}, function(err, test){
+
+	console.log("download product counter: ", test.productId);
+	dbModule.findOne({testId: test.testId}, function(error, test){
+		if (error) {
+			console.error("DB find download product error:", error);
+		}
 		if (test.downloadCount) {
 			test.downloadCount = test.downloadCount + 1;
 		}
@@ -103,6 +111,9 @@ exports.download = function(req, res){
 			test.downloadCount = 1;
 		}
 		test.save(function(err) {
+			if (err) {
+				console.error("DB save download count error:", err);
+			}
 			res.end(JSON.stringify({err:err, url:"/downloadTest"}));
 		});
 	});

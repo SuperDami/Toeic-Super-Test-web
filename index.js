@@ -81,7 +81,6 @@ app.get('/testContentPage', testManage.contentPage);
 app.post('/downloadTest', testManage.download);
 app.get('/main', function(req, res) {
   ad.lastContent(function(error, ad){
-    console.log("ad ", ad);
     if (Array.isArray(ad)) {
       res.render('main.ejs', ad[0]);
     }

@@ -19,15 +19,17 @@ exports.delete = function(req, res){
 exports.postUserData = function(req, res) {
 	var deviceId = req.body.deviceId;
 	var userDataArray = req.body.userData;
+	console.log("post data by deviceId: ", deviceId);
 	for (var i = 0; i < userDataArray.length; i++) {
 		var data = userDataArray[i];
 		var question = new dbModule();
 		for (var key in data) {
 			question[key] = data[key];
 		};
-		console.log("user post data: ", question);
 		question.save(function(err) {
-			res.end(JSON.stringify({err:err}));
+			if (err) {
+				console.error("post user data error: ", err);
+			}
 		});
 	};
 

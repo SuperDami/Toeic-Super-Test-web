@@ -28,6 +28,9 @@ exports.post = function(req, res){
 exports.lastContent = function(callback){
 	var option = {skip:0, limit:1, sort:{last_update: -1}};
 	dbModule.find(null, null, option, function(error, results){
+		if (error) {
+			console.error("DB load header errror:", error);
+		}
 		callback(error, results);
 	});
 }

@@ -8,7 +8,6 @@ function encryptPassword(password) {
 }
 /*ユーザー登録機能*/
 exports.signup = function(req, res){
-    console.log("sign up ", req.body);
     var username = req.body.username;
     req.body.password = encryptPassword(req.body.password);
 
@@ -22,15 +21,15 @@ exports.signup = function(req, res){
         else {
             var newUser = new User(req.body);
             newUser.save(function(err){
-                console.log("sign up check",err);
                 if(err){
-                    message = err;
+                    message = "save new user error: ";
+                    console.error(message, err);
                 }else{
                     message = "sign up successful"
                     req.session.user = username;
                     url = "/test";
+                    console.log(message);
                 }
-                console.log(message);
                 res.send({url:url, message:message});
             });
         }
@@ -39,13 +38,13 @@ exports.signup = function(req, res){
 
 /*ログイン機能*/
 exports.signin = function(req, res) {
-    console.log("login", req.query);
+    console.log("user login");
     var username = req.query.username;
     var password = encryptPassword(req.query.password);
     var query = { "username": username, "password": password };
     User.find(query, function(err, data){
         if(err){
-            console.log(err);
+            console.error("sign in error: ", err);
         }
 
         var message = null;
@@ -56,9 +55,8 @@ exports.signin = function(req, res) {
             req.session.user = username;            
             url = "/test";
             message = "sign in successful"
+            console.log(message);
         }
-
-        console.log(message);
         res.send({url:url, message:message});
     });
 }

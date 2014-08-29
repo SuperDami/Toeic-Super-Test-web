@@ -30,7 +30,8 @@ exports.lastContent = function(req, res){
 	var option = {skip:0, limit:8, sort:{created_at: -1}};
 	dbModule.find(condition, null, option, function(filterErr, results){
 		if (filterErr) {
-			res.send(filterErr);
+			console.error("DB load news error: ", filterErr);
+			res.send(404);
 		}
 		else {
 			res.send(results);
