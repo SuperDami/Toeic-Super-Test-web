@@ -22,6 +22,14 @@ app.use(express.session({
     }
 }));
 
+app.configure('development', function(){   
+  app.use(express.logger('dev'));
+});
+
+app.configure('production', function(){    
+  app.use(express.logger('default')); 
+});
+
 var loginCheck = function(req, res, next) {
     if(req.session.user){
       next();
