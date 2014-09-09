@@ -61,7 +61,7 @@ app.get('/login', function(req, res){
 });
 app.get('/logout', function(req, res){
   req.session.destroy();
-  console.log('deleted sesstion');
+  console.log('deleted session');
   res.redirect('/');
 });
 

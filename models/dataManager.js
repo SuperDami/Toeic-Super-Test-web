@@ -31,7 +31,7 @@ function saveItem(module, elements, callback) {
 
 	module.findOne(conditions, function(err, result){
 		if (err) {
-			console.error("DB find item error: ", err);
+			console.log("item not exist");
 		}
 
 		if (!result) {
