@@ -10,7 +10,9 @@ var userDataManage = require('./userData.js');
 var ad = require('./ad.js');
 
 app.use(express.static('public'));
-app.use(express.bodyParser());
+//app.use(express.bodyParser());
+app.use(express.json());
+app.use(express.urlencoded());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.use(express.cookieParser()); //追加
