@@ -32,7 +32,7 @@ var AnsweredQuestion = mongoose.Schema({
 var News = mongoose.Schema({
     title: String,
     content: String,
-    created_at: String,
+    created_at: Date,
     author: String,
     published: Boolean
 });
@@ -46,7 +46,7 @@ var Ad = mongoose.Schema({
     imageUrl: String,
     linkUrl: String,
     published: Boolean,
-    last_update: String,
+    last_update: Date,
 });
 
 Test.pre('save', function(next){
