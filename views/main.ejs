@@ -33,8 +33,6 @@
                         var newButton = createButtonWith(test);
                         element.remove();
                         cell.append(newButton);
-
-                        console.log("button purchasedAbled");
                     }
                 };
             };
@@ -123,7 +121,7 @@
                 downloadBtn.addClass("downloadBtn downloadedLabel").text("ダウンロード済み").attr("disabled", true);
             } else if (test.status === "purchased") {
                 downloadBtn = $("<button>");
-                downloadBtn.addClass("downloadBtn").text("ダウンロード");
+                downloadBtn.addClass("downloadBtn").text("ダウンロード").attr("disabled", false);
                 downloadBtn.click(function(){ 
                     downloadTest(test);
                 });
@@ -134,7 +132,7 @@
             } else if (test.status === "purchaseAbled") {
                 var text = "¥" + test.price;
                 downloadBtn = $("<button>");
-                downloadBtn.addClass("purchaseBtn").text(text);
+                downloadBtn.addClass("purchaseBtn").text(text).attr("disabled", false);
                 downloadBtn.click(function(){ 
                     purchaseTest(test);
                 });                
