@@ -15,6 +15,14 @@
         var category = "popular";
         var selectionCells = {};
 
+        function sendAppUrl(href) {
+            var iframe = document.createElement('IFRAME');
+            iframe.setAttribute('src', href);
+            document.body.appendChild(iframe);
+            iframe.parentNode.removeChild(iframe);
+            iframe = null;
+        }
+
         function clientUpdateProductInfo(productList) {
             console.log(productList);
 
@@ -28,15 +36,10 @@
 
                         test.price = product.price;
                         test.status = "purchaseAbled"
-                        var cell = selectionCells[test.testId];
-                        var element = $(cell).find("button");
-                        var newButton = createButtonWith(test);
-                        element.remove();
-                        cell.append(newButton);
+                        updateButtonWith(test);
                     }
                 };
             };
-            console.log("update product info!!!!!!!!!!!!!");
         }
 
         function clientPurchasedProductId(productId) {
@@ -49,14 +52,7 @@
                     test.status = "purchased"
                     var testId = test.testId;
                     console.log("puchased testId", testId);
-
-                    var cell = selectionCells[testId];
-                    var element = $(cell).find("button");
-                    console.log(element);
-
-                    var newButton = createButtonWith(test);
-                    element.remove();
-                    cell.append(newButton);
+                    updateButtonWith(test);
                 }
             }
         }
@@ -70,13 +66,7 @@
                     console.log("downloading testId", testId);
 
                     test.status = "downloading"
-                    var cell= selectionCells[testId];
-                    var element = $(cell).find("button");
-                    console.log(element);
-
-                    var newButton = createButtonWith(test);
-                    element.remove();
-                    cell.append(newButton);
+                    updateButtonWith(test);
                 }
             }
         }
@@ -91,13 +81,7 @@
                     console.log("download testId", testId);
 
                     test.status = "downloaded"
-                    var cell= selectionCells[testId];
-                    var element = $(cell).find("button");
-                    console.log(element);
-
-                    var newButton = createButtonWith(test);
-                    element.remove();
-                    cell.append(newButton);
+                    updateButtonWith(test);
                 }
             }
         }
@@ -115,32 +99,40 @@
         }
 
         function createButtonWith(test) {
-            var downloadBtn;
-            if (test.status === "downloaded") {
-                downloadBtn = $("<button>");
-                downloadBtn.addClass("downloadBtn downloadedLabel").text("ダウンロード済み").attr("disabled", true);
-            } else if (test.status === "purchased") {
-                downloadBtn = $("<button>");
-                downloadBtn.addClass("downloadBtn").text("ダウンロード").attr("disabled", false);
-                downloadBtn.click(function(){ 
+            var downloadBtn = $("<button>");
+            downloadBtn.attr("testId", test.testId);
+            downloadBtn.click(function() {
+                var status = $(this).attr("status"); 
+                if (status === "purchased") {
                     downloadTest(test);
-                });
+                }
+                else if (status == "purchaseAbled") {
+                    purchaseTest(test);
+                }
+            });
+            return downloadBtn;
+        }
+
+        function updateButtonWith(test) {
+            var testId = test["testId"];
+            var element = $("button[testId='" + testId + "']");
+            element.removeClass();
+            element.attr("status", test.status);
+
+            if (test.status === "downloaded") {
+                element.addClass("downloadBtn downloadedLabel").text("ダウンロード済み");
+            } else if (test.status === "purchased") {
+                element.addClass("downloadBtn").text("ダウンロード");
             } else if(test.status === "purchaseNotabled"){
-                // var text = (test.price ? "¥" + test.price : "フリー");
-                downloadBtn = $("<button>");
-                downloadBtn.addClass("purchaseBtn").text("載入中").attr("disabled", true);
+                element.addClass("purchaseBtn").text("載入中");
             } else if (test.status === "purchaseAbled") {
                 var text = "¥" + test.price;
-                downloadBtn = $("<button>");
-                downloadBtn.addClass("purchaseBtn").text(text).attr("disabled", false);
-                downloadBtn.click(function(){ 
-                    purchaseTest(test);
-                });                
+                element.addClass("purchaseBtn").text(text);
             } else if (test.status === 'downloading') {
-                downloadBtn = $("<button>");
-                downloadBtn.addClass("downloadBtn downloadedLabel").text("ダウンロード中");
+                element.addClass("downloadBtn downloadedLabel").text("ダウンロード中");
             }
-            return downloadBtn;
+
+            console.log("update btn status:", test.status);
         }
 
         function refreshNewsContent() {
@@ -174,26 +166,6 @@
                     var media = $("<div>").addClass("media");
                     mediaBox.append(media);
                     media.append(content);
-
-                    // if (image) {
-                    //     media.append($("<a>").addClass("pull-left"));
-                    //     media.append($("<img>").addClass("img-responsive").attr({alt:"image", src:""}));
-                    // };
-
-                    // media.append($("<div>").addClass("clearfix visible-sm"));
-                    // var mediaBody = $("<div>").addClass("media-body fnt-smaller");
-                    // media.append(mediaBody);
-                    // mediaBody.append($("<a>").attr({href:"#", target:"_parent"}));
-
-                    // var h4 = $("<h4>").addClass("media-heading");
-                    // var a =$("<a>").attr({href:"#", target:"_parent"}).text(title)
-                    // var small = $("<small>").addClass("pull-right").text(dateString).css({"width":"100%", "margin": "20px auto 5px auto", "text-align":"right"});
-                    // h4.append(a.append(small));
-                    // mediaBody.append(h4);
-
-                    // mediaBody.append($("<p>").addClass("text-left").text(content).css({"width":"100%"}));
-                    // mediaBody.append($("<span>").addClass("fnt-smaller fnt-lighter fnt-arial").text(author));
-
                     leftDiv.append(mediaBox);
                 }
             })
@@ -227,7 +199,6 @@
             $("#selectGrid").show();
 
             $.get("/testContentPage", {category: categoryName, page:page, fetchedTestId: testIdsString, purchasedTestId: productIdString}, function(data){
-                console.log("jaquery :", data);
                 testList = data.testList;
                 var selectGridDiv = $($("#selectGrid"));
                 selectGridDiv.empty();
@@ -277,7 +248,7 @@
 
                         cell.append(imageCover).append(title).append(downloadBtn);
                         selectGridDiv.append(cell);
-                        selectionCells[testId] = cell;
+                        updateButtonWith(test);
                     }
                     $("#pageControl").show();
 
@@ -307,7 +278,8 @@
                         // nextBtn.find("a").off('click');
                     }
                     $(".pagination li a").eq(1).text((page + 1) + "/" + pageCount).data("current", page);
-                    window.location = 'com.alc.topic.supertest.gotopage://' + (page);
+                    var href = 'com.alc.topic.supertest.gotopage://' + (page);
+                    sendAppUrl(href);
                 }
             });
         }
@@ -320,7 +292,8 @@
 
             var categoryName = $(a).attr("name");
             if (categoryName === "restore") {
-                window.location = "com.alc.topic.supertest.restore://";
+                var href = "com.alc.topic.supertest.restore://";
+                sendAppUrl(href);
             }
             else {
                 page = 0;
@@ -337,7 +310,8 @@
 
         function purchaseTest(test) {
             console.log("purchase", test);
-            window.location = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&productId=" + encodeURIComponent(test.productId);
+            var href = 'com.alc.topic.supertest.purchase://' + "testId=" + encodeURIComponent(test.testId) + "&productId=" + encodeURIComponent(test.productId);
+            sendAppUrl(href);
         }
 
     	function downloadTest(test) {
