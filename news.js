@@ -6,7 +6,7 @@ var showColumnArray = ["title", "created_at", "published"];
 var editColumnArray = ["title", "author", "content", "published"];
 
 exports.newsList = function(req, res){
-	res.render('testList.ejs', {category:"news", admin:req.session.user, option:["add", "edit", "delete"]});
+	res.render('testList.ejs', {category:"news", admin:req.cookies.user, option:["add", "edit", "delete"]});
 }
 
 exports.listData = function(req, res) {

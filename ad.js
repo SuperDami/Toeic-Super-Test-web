@@ -6,7 +6,7 @@ var editColumnArray = ["imageUrl", "linkUrl"];
 var showColumnArray = ["last_update"];
 
 exports.adList = function(req, res){
-	res.render('testList.ejs', {category:"ad", admin:req.session.user, option:["add", "edit", "delete"]});
+	res.render('testList.ejs', {category:"ad", admin:req.cookies.user, option:["add", "edit", "delete"]});
 }
 
 exports.listData = function(req, res) {

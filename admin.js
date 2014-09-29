@@ -5,7 +5,7 @@ var dbModule = data.User;
 var showColumnArray = ["username"];
 
 exports.adminList = function(req, res){
-	res.render('testList.ejs', {category:"admin", admin:req.session.user, option:["delete"]});
+	res.render('testList.ejs', {category:"admin", admin:req.cookies.user, option:["delete"]});
 }
 
 exports.listData = function(req, res) {

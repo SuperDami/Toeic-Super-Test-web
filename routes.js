@@ -26,7 +26,7 @@ exports.signup = function(req, res){
                     console.error(message, err);
                 }else{
                     message = "sign up successful"
-                    req.session.user = username;
+                    res.cookie('user', username);
                     url = "/test";
                     console.log(message);
                 }
@@ -42,20 +42,21 @@ exports.signin = function(req, res) {
     var username = req.query.username;
     var password = encryptPassword(req.query.password);
     var query = { "username": username, "password": password };
-    User.find(query, function(err, data){
+    User.findOne(query, function(err, data){
         if(err){
             console.error("sign in error: ", err);
         }
 
         var message = null;
         var url = null;
-        if(data == ""){
-            message = "sign in failed"
-        }else{
-            req.session.user = username;            
+
+        console.log("data ", data);
+        if(data.username){
+            res.cookie('user', data.username);
             url = "/test";
             message = "sign in successful"
-            console.log(message);
+        }else{
+            message = "sign in failed"
         }
         res.send({url:url, message:message});
     });

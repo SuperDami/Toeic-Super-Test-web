@@ -16,7 +16,7 @@ app.use(express.urlencoded());
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.use(express.cookieParser()); //追加
-app.use(express.session({
+app.use(express.cookieSession({
     secret: 'secret',
     cookie: {
         httpOnly: false,
@@ -33,7 +33,7 @@ app.configure('production', function(){
 });
 
 var loginCheck = function(req, res, next) {
-    if(req.session.user){
+    if(req.cookies.user){
       next();
     }else{
       res.redirect('/login');
@@ -60,8 +60,8 @@ app.get('/login', function(req, res){
   res.render('login.ejs');
 });
 app.get('/logout', function(req, res){
-  req.session.destroy();
-  console.log('deleted session');
+  res.clearCookie('user');
+  console.log('deleted cookie');
   res.redirect('/');
 });
 
