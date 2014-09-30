@@ -29,6 +29,11 @@
           var password = $("#signup").find("#password").val();
           var reenterpassword = $("#signup").find("#reenterpassword").val();
           if(password === reenterpassword) {
+            if (!password.length) {
+              alert("your passwords can not be empty");
+              return;
+            }
+
             $.post("/signup", {username: username, password: password}, function(result){
               var message = result.message;
               var url = result.url;
@@ -41,7 +46,7 @@
             });
           }
           else {
-            alert("your enter passwords are not same")
+            alert("your enter passwords are not same");
           }
     }
 
