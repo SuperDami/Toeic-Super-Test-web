@@ -48,11 +48,11 @@ exports.signin = function(req, res) {
         var message = null;
         var url = null;
 
-        if(data.username){
-            res.cookie('user', data.username);
+        if(data instanceof User){
+            res.cookie('user', username);
             url = "/test";
             message = "sign in successful"
-        }else{
+        } else{
             message = "sign in failed"
         }
         console.log(message);
