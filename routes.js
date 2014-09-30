@@ -38,7 +38,6 @@ exports.signup = function(req, res){
 
 /*ログイン機能*/
 exports.signin = function(req, res) {
-    console.log("user login");
     var username = req.query.username;
     var password = encryptPassword(req.query.password);
     var query = { "username": username, "password": password };
@@ -46,11 +45,9 @@ exports.signin = function(req, res) {
         if(err){
             console.error("sign in error: ", err);
         }
-
         var message = null;
         var url = null;
 
-        console.log("data ", data);
         if(data.username){
             res.cookie('user', data.username);
             url = "/test";
@@ -58,6 +55,7 @@ exports.signin = function(req, res) {
         }else{
             message = "sign in failed"
         }
+        console.log(message);
         res.send({url:url, message:message});
     });
 }
