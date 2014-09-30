@@ -51,9 +51,9 @@ exports.signin = function(req, res) {
         if(data instanceof User){
             res.cookie('user', username);
             url = "/test";
-            message = "sign in successful"
+            message = "sign in successful";
         } else{
-            message = "sign in failed"
+            message = "sign in failed";
         }
         console.log(message);
         res.send({url:url, message:message});
