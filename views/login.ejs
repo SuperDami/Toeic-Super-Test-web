@@ -28,26 +28,32 @@
           var username = $("#signup").find("#userid").val();
           var password = $("#signup").find("#password").val();
           var reenterpassword = $("#signup").find("#reenterpassword").val();
-          if(password === reenterpassword) {
-            if (!password.length) {
-              alert("your passwords can not be empty");
-              return;
-            }
+          
+          if (password != reenterpassword) {
+            alert("Your enter passwords are not same.");
+            return;
+          }
 
-            $.post("/signup", {username: username, password: password}, function(result){
-              var message = result.message;
-              var url = result.url;
-              if (message) {
-                alert(message);
-              }          
-              if (url) {
-                window.location = url;
-              }    
-            });
+          if (!password.length) {
+            alert("Your passwords can not be empty");
+            return;
           }
-          else {
-            alert("your enter passwords are not same");
+
+          if (/^[a-zA-Z0-9- ]*$/.test(password) == false) {
+            alert("Your password contains illegal characters.");
+            return;
           }
+
+          $.post("/signup", {username: username, password: password}, function(result){
+            var message = result.message;
+            var url = result.url;
+            if (message) {
+              alert(message);
+            }          
+            if (url) {
+              window.location = url;
+            }    
+          });
     }
 
   $(document).ready(function() {
